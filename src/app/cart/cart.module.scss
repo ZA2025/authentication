@@ -1,0 +1,80 @@
+.bag {
+    position: relative;
+    position: relative;
+    max-width: 1280px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 50px 20px;
+    border-bottom: 1px solid rgb(186, 186, 186);
+    @media screen and (min-width: 1280px) {
+        // padding: 50px 20px;
+        padding: 50px 0px;
+    }
+    @media screen and (min-width: 768px) {
+        display: flex;
+    }
+
+    &Left {
+        width: 100%;
+        padding: 20px 0;
+        @media screen and (min-width: 768px) {
+            width: 70%;
+        }
+    }
+
+    &Right {
+        @media screen and (min-width: 768px) {
+            padding: 20px;
+        }
+    }
+
+    &Title, &Summary {
+        font-size: 24px;
+    }
+
+    &Summary, &Payment, &Delivery {
+        padding-bottom: 30px;
+    }
+
+    &Line {
+        margin: 20px 0;
+    }
+    
+    &Btn {
+        background-color: black;
+        color: white;
+        padding: 15px 30px;
+        display: block;
+        text-align: center;
+        border-radius: 50px;
+        margin-top: 20px;
+        font-weight: bold;
+        &:hover {
+            background-color: gray;
+        }
+        &Disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+    }
+    &Delivery, &Payment, &Summary {
+        border-bottom: 1px solid rgb(185, 184, 184);
+    }
+    &DeliveryTitle {
+         
+    }
+    &PaymentTitle {
+        
+        margin-top: 20px;
+    }
+    &SummaryTitle {
+        margin-top: 20px;
+    }
+}
+.disabledSection {
+    opacity: 0.5;
+    pointer-events: none;
+    filter: grayscale(80%);
+}
+ 

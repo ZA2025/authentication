@@ -1,0 +1,37 @@
+@use './variables.scss' as *;
+
+@mixin button-primary(
+  $bg-color: #000,
+  $hover-color: #414142,
+  $text-color: #fff
+) {
+  text-align: center;
+  position: relative;
+  display: inline-block;
+  justify-content: center;
+  background-color: $bg-color;
+  color: $text-color;
+  padding: 15px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 50px;
+  border: 0;
+  width: 100%;
+  font-weight: bold;
+  margin-bottom: 20px;
+  
+
+  &:hover {
+    background-color: $hover-color;
+    color: $text-color;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    border-color: $white;
+  }
+
+  &:focus-visible {
+    outline: 0;
+    text-decoration: underline;
+  }
+}

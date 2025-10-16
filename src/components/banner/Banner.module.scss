@@ -1,0 +1,41 @@
+.bannerContainer {
+    position: relative;
+    width: 100%;
+    background-color: #ddf8ff; 
+    padding: 50px 0;
+}
+.banner {
+    position: relative;
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    
+    &ColLeft {
+        position: relative;
+        width: 100%;
+        
+    }
+    &ColRight {
+        position: absolute;
+        width: 50%;
+        right: 0;
+        top: 100px;
+    }
+    &Image {
+        width: 100%;
+        height: auto;
+        max-width: 700px;
+    }
+    &Title {
+        font-size: 24px;
+    }
+    &Description {
+        font-size: 16px;
+    }
+    &Inner {
+        max-width: 500px;
+    }
+}

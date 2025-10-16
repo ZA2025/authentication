@@ -1,0 +1,15 @@
+.btn {
+    background-color: black;
+    color: white;
+    padding: 15px 30px;
+    display: block;
+    text-align: center;
+    border-radius: 50px;
+    margin-top: 20px;
+    font-weight: bold;
+    border: 0;
+    cursor: pointer;
+    &:hover {
+        background-color: gray;
+    }
+}

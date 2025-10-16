@@ -1,0 +1,60 @@
+@use '../../styles/variables.scss' as *;
+@use '../../styles/mixins.scss' as *;
+
+.product {
+    position: relative;
+    width: 100%;
+    max-width: 1260px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 20px;
+    @media screen and (min-width: 768px) {
+        display: flex;
+    }
+    @media screen and (min-width: 1280px) {
+        padding: 50px 0px;
+    }
+    &Name {
+        font-size: 18px;
+        @media screen and (min-width: 768px)  {
+            font-size: 24px;
+        }
+    }
+    &Col {
+        &.right {
+            width: 100%;
+            padding: 20px 0 0 0;
+            
+            @media screen and (min-width: 768px) {
+                width: 50%;
+                padding: 50px 30px;
+            }
+        }
+        &.left {
+            width: 100%;
+            @media screen and (min-width: 768px) {
+                width: 50%;
+            }
+        }
+
+    }
+    &Image {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+   
+    &Link {
+        @include button-primary(black, gray, white);
+    }
+     
+    &Price {
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    &Favorit {
+        @include button-primary(black, gray, white);
+        
+         
+    }
+}

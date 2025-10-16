@@ -1,0 +1,155 @@
+@use '../../styles/variables.scss' as *;
+
+.header {
+    width: 100%;
+    position: relative;
+    background-color: #fff;
+    border-bottom: 1px solid #f1f1f1;
+     
+}
+
+.nav {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 20px;
+    @media screen and (min-width: 1280px) {
+        max-width: 1280px;
+    }
+
+    &Admin {
+        width: 20px;
+        height: 20px;
+    }
+    &LogoContainer {
+        max-width: 300px;
+        align-self: center;
+    }
+
+    &Logo {
+        width: 44px;
+        height: auto;
+        display: block;
+        height: auto;
+        box-sizing: border-box; 
+        background: $blue;
+        border-radius: 50px;
+        padding: 5px; 
+    }
+
+    &List {
+        display: none;
+        list-style: none;
+        flex-direction: column;
+        justify-content: flex-start;
+        position: absolute;
+        top: 86px;
+        left: 0;
+        width: 100%;
+        background-color: $white;
+        height: 100vh;
+        overflow-x: hidden;
+        transform: translateX(100%);
+        transition: transform 0.5s ease-out;
+
+        @media screen and (min-width: 768px) {
+            display: flex;
+            position: unset;
+            flex-direction: row;
+            width: auto;
+            padding: 0;
+            gap: 20px;
+            height: auto;
+            transform: translateX(0);
+            transition: none;
+        }
+    }
+
+    &ListOpen {
+        display: flex;
+        z-index: 2;
+        transform: translateX(0);
+
+        @media screen and (min-width: 768px) {
+            transform: none;
+        }
+    }
+
+    &Item {
+        display: flex;
+        align-items: center;
+    }
+
+    &Link {
+        position: relative;
+        color: $black;
+        font-weight: bold;
+        border-bottom: 1px solid #f1f1f1;
+        width: 100%;
+        padding: 15px;
+        background-color: white;
+        border: 0;
+        @media screen and (min-width: 768px) {
+            text-decoration: none;
+            border-top: none;
+            border-bottom: none;
+        }
+
+        &:hover {
+            &::after {
+                content: "";
+                width: 100%;
+                border-bottom: 5px solid #95d0ff;
+                position: absolute;
+                bottom: 0px;
+                left: 0;
+            }
+        }
+    }
+    &IconWrapper {
+        
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        
+        svg {
+            color: #111; // Nike-style dark icon
+        }
+    }
+    &Badge {
+        position: absolute;
+        top: -6px;
+        right: -10px;
+        background-color: #ff3b30; // Nike uses bold red for alerts
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 50%;
+        padding: 2px 6px;
+        min-width: 18px;
+        text-align: center;
+        line-height: 1;
+      }
+}
+
+.burger {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+
+    @media screen and (min-width: 768px) {
+        display: none;
+    }
+
+    &Line {
+        width: 25px;
+        height: 3px;
+        background-color: $blue;
+        margin: 3px;
+        transition: all 0.3s ease;
+    }
+}

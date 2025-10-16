@@ -1,0 +1,100 @@
+.cartItem {
+    // display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin-bottom: 30px;
+    box-sizing: border-box;
+    @media screen and (min-width: 768px) {
+        display: flex;
+    }
+    &Image {
+        width: 100%;
+        height: auto;
+        @media screen and (min-width: 768px) {
+            width: 20%;
+        }
+         
+        img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+    }
+    &Info {
+        width: 100%;
+        padding: 10px;
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+        @media screen and (min-width: 768px) {
+            width: 80%;
+        }
+    }
+    &Name {
+        font-size: 16px;
+        margin: 0;
+        @media screen and (min-width: 768px) {
+            font-size: 20px;
+        }
+    }
+    &QuantityBtn {
+        background-color: white;
+        border: 1px solid gray;
+        padding: 5px;
+        border-radius: 10%;
+        cursor: pointer;
+    }
+    &Quantity {
+        max-width: fit-content;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-size: 14px;
+         
+    }
+    &Btn {
+        background-color: transparent;
+        border: 0;
+        font-size: 16px;
+        text-decoration: underline;
+        cursor: pointer;
+        padding-top: 3px;
+        height: fit-content;
+
+    }
+    &ColLeft {
+        width: 50%;
+    }
+    &ColRight {
+        width: 50%;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;  
+    }
+    &Subtotal {
+        font-size: 16px;
+        font-weight: bold;
+    }
+    &Price {
+        font-size: 14px;
+    }
+    &bagBtn {
+        background-color: black;
+        color: white;
+        padding: 15px 30px;
+        display: block;
+        text-align: center;
+        border-radius: 50px;
+        margin-top: 20px;
+        font-weight: bold;
+        &:hover {
+            background-color: gray;
+        }
+      
+        &.disabledBtn {
+          opacity: 0.5;
+          pointer-events: none;
+          cursor: not-allowed;
+        }
+      }
+}
