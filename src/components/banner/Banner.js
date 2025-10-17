@@ -7,7 +7,7 @@ const Banner = () => {
         <div className={styles.bannerContainer}>
             <div className={styles.banner}>
                 <div className={styles.bannerColLeft}>
-                    <Image className={styles.bannerImage} src="/images/clouds.png" alt="Banner" width={500} height={500} />
+                    <Image className={styles.bannerImage} src="/images/rocket-clouds.png" alt="Banner" width={500} height={500} />
                 </div>
                 <div className={styles.bannerColRight}>
                     <div className={styles.bannerInner}>
