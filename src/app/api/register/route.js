@@ -97,12 +97,7 @@ export const POST = async (req) => {
                 try {
                     const { Resend } = await import('resend');
                     const resend = new Resend(process.env.RESEND_API_KEY);
-                    // ADD CONSOLE LOGS HERE
-                    console.log('About to send email to:', email);
-                    console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
-                    console.log('RESEND_FROM_EMAIL:', process.env.RESEND_FROM_EMAIL);
                      
-                    
                     // Generate verification token
                     const verificationToken = crypto.randomBytes(32).toString('hex');
                     
