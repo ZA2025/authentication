@@ -117,14 +117,14 @@
         justify-content: center;
         
         svg {
-            color: #111; // Nike-style dark icon
+            color: #111;  
         }
     }
     &Badge {
         position: absolute;
         top: -6px;
         right: -10px;
-        background-color: #ff3b30; // Nike uses bold red for alerts
+        background-color: #ff3b30;  
         color: #fff;
         font-size: 12px;
         font-weight: 600;

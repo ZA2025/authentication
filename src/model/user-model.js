@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
     },
     password: {
         type: String,
@@ -21,13 +22,25 @@ const userSchema = new mongoose.Schema({
         enum: ['local', 'oauth'],
         default: 'local',
     },
-    // --- Add this block below ---
+    
     role: {
         type: String,
         enum: ['user', 'admin'],
         default: 'user',
     },
-    // --- End of new block ---
+    // Add email verification fields
+    emailVerified: {
+        type: Boolean,
+        default: false,
+    },
+    emailVerificationToken: {
+        type: String,
+        default: null,
+    },
+    emailVerificationExpiry: {
+        type: Date,
+        default: null,
+    },
     resetToken: {
         type: String,
         required: false,

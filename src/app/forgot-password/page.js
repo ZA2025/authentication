@@ -42,6 +42,7 @@ const ForgotPasswordPage = () => {
             });
 
             const data = await res.json();
+            console.log('data', data);
             
             if (res.status === 400) {
                 setError("User doesn't exist: User not registered with this email address");
@@ -51,7 +52,7 @@ const ForgotPasswordPage = () => {
                 setMessage(data.message);
                  
                 setError(null);
-                router.push('/');
+                // router.push('/');
             }
             if (res.status === 403) {
                 setError('Google users cannot reset passwords. Please use Google login.');

@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.scss";
+ 
 import { SessionProvider } from "next-auth/react";
 import Header from "../components/header/Header";
 import { BasketProvider } from "@/contexts/BasketContext";

@@ -39,6 +39,15 @@ a {
     color: inherit;
     text-decoration: none;
 }
+.link-primary {
+    color: $black;
+    font-weight: bold;
+     
+}
+.link-secondary {
+    text-decoration: underline;
+    margin-left: 10px;
+}
 .googleButton {
     display: flex;
     align-items: center;
@@ -71,6 +80,25 @@ a {
     }
 }
 
+.success-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    max-width: 100%;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 50px 20px;
+    @media screen and (min-width: 1280px) {
+        padding: 50px 20px;
+    }
+    .successMessage {
+        max-width:100%;
+        @media screen and (min-width: 1280px) {
+            max-width: 500px;
+        }
+    }
+}
 .inner-section {
     position: relative;
     max-width: 1280px;
@@ -81,6 +109,22 @@ a {
         padding: 50px 20px;
     }
 }
+.successMessage {
+    background-color: #e6ffed;
+    padding: 10px 16px;
+    border-radius: 6px;
+    margin: 12px 0;
+    font-weight: 600;
+    color: #05603a;
+    border: 1px solid #abefc6;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    font-weight: 600;
+    max-width: 100%;
+    box-sizing: border-box;
+    width: 100%;
+  }
 
 .errorMessage {
     background-color: #ff8c8c;
@@ -177,6 +221,7 @@ a {
 
 .form-submit {
     @include button-primary;
+    max-width: fit-content;
 }
 
 .mySwiper {

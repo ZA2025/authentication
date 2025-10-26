@@ -3,6 +3,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { authConfig } from "@/auth.config";
+import { getClientIP, rateLimit } from '@/lib/rateLimiter';
 import User from "@/model/user-model";
 import UserInfo from "@/model/userInfo-model";
 import bcrypt from "bcryptjs";
@@ -38,8 +39,16 @@ export const {
                 email: {},
                 password: {},
             },
-            async authorize(credentials) {
+            async authorize(credentials, req) {
                 if (credentials === null) return null;
+                // Rate limiting
+                const clientIP = getClientIP(req);
+                const rateLimitResult = rateLimit(`login:${clientIP}`, 5, 15 * 60 * 1000); // 5 attempts per 15 minutes
+                
+                if (!rateLimitResult.success) {
+                    console.log(`Rate limit exceeded for IP: ${clientIP}`);
+                    return null;
+                }
                 
                 try {
                     const user = await User.findOne({
@@ -47,6 +56,13 @@ export const {
                     }).lean();
                      
                     if (user) {
+                        // Check if email is verified (only for local auth)
+                        if (!user.emailVerified && user.authType === 'local') {
+                            console.log(`Email not verified for user: ${user.email}`);
+                            return null;
+                        }
+                        // End of email verification check
+                        
                         const isMatch = await bcrypt.compare(
                             credentials.password,
                             user.password
@@ -54,13 +70,19 @@ export const {
 
                         if (isMatch) {
                             // Include _id in the returned user object
-                           
-                            return { id: user._id.toString(), email: user.email, name: user.name, role: user.role };
+                            return { 
+                                id: user._id.toString(), 
+                                email: user.email, 
+                                name: user.name, 
+                                role: user.role
+                            };
                         } else {
-                            throw new Error("Email or Password is not correct");
+                            // Don't expose specific error details
+                            return null;
                         }
                     } else {
-                        throw new Error("User not found");
+                        // Don't expose specific error details
+                        return null;
                     }
                 } catch (error) {
                     throw new Error(error);
@@ -78,35 +100,31 @@ export const {
                 },
             },
             async profile(profile) {
-                // Ensure the user information is stored in the UserInfo collection
-                await connectDB();
-                let user = await User.findOne({ email: profile.email });
+                try {
+                    // Ensure the user information is stored in the UserInfo collection
+                    await connectDB();
+                    let user = await User.findOne({ email: profile.email });
 
-                if (!user) {
-                    user = new User({
-                        name: profile.name,
-                        email: profile.email,
-                        authType: "oauth", // ✅ Mark as OAuth user
-                        //password: undefined, // No password for OAuth users
-                    });
-                    await user.save({ validateBeforeSave: false });
+                    if (!user) {
+                        user = new User({
+                            name: profile.name,
+                            email: profile.email,
+                            authType: "oauth", 
+                        });
+                        await user.save({ validateBeforeSave: false });
+                    }
+                    return { 
+                        id: user._id.toString(), 
+                        email: user.email, 
+                        name: user.name,
+                        role: user.role
+                    };
+
+                } catch (error) {
+                    console.error('Google OAuth error:', error);
+                    return null;
                 }
-                //const userInfo = await UserInfo.findOne({ userId: user._id });
-                //if (!userInfo) {
-                //    const newUserInfo = new UserInfo({
-                //        userId: user._id,
-                //        name: profile.name,
-                //    });
-                //    await newUserInfo.save();
-                //}
-
-
-                return { 
-                    id: user._id.toString(), 
-                    email: user.email, 
-                    name: user.name,
-                    role: user.role
-                };
+                 
             },
         }),
     ],

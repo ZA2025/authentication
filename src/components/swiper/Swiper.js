@@ -13,6 +13,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
  
 import { useLimitedProducts } from '@/hooks/useLimitedProducts';
+import Link from 'next/link';
 
 export default function AppleStyleSlider() {
     // const [products, setProducts] = useState([]);
@@ -92,24 +93,25 @@ export default function AppleStyleSlider() {
             {products.map((item) => {
                 return (
                     <SwiperSlide key={item._id}>
-                        <Image
-                        src="/images/tshirt.avif" // make sure your API returns an image URL
-                        alt={item.name}
-                        width={400}
-                        height={400}
-                        className="rounded-xl"
-                        priority
-                        />
-                        <p>{item.name}</p>
-                        <p>£{item.price}</p>
-
+                        <Link href={`/products/${item._id}`}>
+                            <Image
+                            src="/images/tshirt.avif" // make sure your API returns an image URL
+                            alt={item.name}
+                            width={400}
+                            height={400}
+                            className="rounded-xl"
+                            priority
+                            />
+                            <p>{item.name}</p>
+                            <p>£{item.price}</p>
+                        </Link>
                     </SwiperSlide>
                 )
                  
             })}
 
         </Swiper>
-        <div className="custom-scrollbar w-[calc(3*300px+60px)] mx-auto mt-2 h-2 rounded bg-gray-200"></div>
+        <div className=""></div>
     </div>
   );
 }
