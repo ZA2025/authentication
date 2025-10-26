@@ -101,7 +101,7 @@ export const POST = async (req) => {
                     console.log('About to send email to:', email);
                     console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
                     console.log('RESEND_FROM_EMAIL:', process.env.RESEND_FROM_EMAIL);
-                    console.log('User created successfully:', !!user);
+                     
                     
                     // Generate verification token
                     const verificationToken = crypto.randomBytes(32).toString('hex');
