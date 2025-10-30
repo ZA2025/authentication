@@ -16,7 +16,7 @@ export async function GET() {
 // Post create a new product (only admin)
 export async function POST(req) {
     const session = await auth();
-    console.log(session, "session is");
+    
     if (!session?.user) {
         return new NextResponse("You are not authenticated!", { status: 401 });
     }

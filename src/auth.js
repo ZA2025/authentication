@@ -5,7 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { authConfig } from "@/auth.config";
 import { getClientIP, rateLimit } from '@/lib/rateLimiter';
 import User from "@/model/user-model";
-import UserInfo from "@/model/userInfo-model";
 import bcrypt from "bcryptjs";
 
 // Connect to MongoDB before authentication
