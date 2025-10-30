@@ -1,113 +1,85 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-import Product from "@/model/product";
 import Basket from "@/model/basket";
 import connectToDatabase from "@/lib/mongodb";
 
+// GET: return items for authenticated user
 export async function GET() {
   try {
     await connectToDatabase();
     const session = await auth();
+    if (!session?.user) return new NextResponse("Unauthorized", { status: 401 });
 
-    if (!session?.user) {
-        return new NextResponse("Unauthorized", { status: 401 });
-    }
-    const basket = await Basket.find({ userId: session.user.id }).populate("productId"); 
-    return NextResponse.json(basket);
-
+    const items = await Basket.find({ userId: session.user.id }).sort({ updatedAt: -1 });
+    return NextResponse.json(items || []);
   } catch (error) {
-      console.error("Error fetching basket:", error);
-  return new NextResponse("Internal Server Error", { status: 500 });
-
+    console.error("Error fetching basket:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
+// POST: upsert by (userId + productId) using a product snapshot
+// Body: { product: { id, name, price, imageUrl?, slug? }, quantity }
 export async function POST(req) {
-
   try {
     await connectToDatabase();
     const session = await auth();
-    if (!session?.user) {
-        return new NextResponse('You are not authenticated', {
-            status: 401,
-        });
+    if (!session?.user) return new NextResponse("Unauthorized", { status: 401 });
+
+    const body = await req.json();
+    const { product, quantity = 1 } = body || {};
+
+    if (!product?.id) return new NextResponse("product.id is required", { status: 400 });
+    if (typeof product?.name !== "string" || typeof product?.price !== "number") {
+      return new NextResponse("product.name(string) and product.price(number) are required", { status: 400 });
     }
 
-    const { productId, quantity = 1 } = await req.json();
-    const product = await Product.findById(productId);
-
-    if (!productId) return new NextResponse("productId is required", { status: 400 });
-    
-    // Check if already in basket
-    let basketItem = await Basket.findOne({
+    const selector = { userId: session.user.id, productId: product.id };
+    const update = {
+      $setOnInsert: {
         userId: session.user.id,
-        productId,
-    });
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.imageUrl || "",
+        slug: product.slug || "",
+      },
+      $inc: { quantity: Number(quantity) || 1 },
+    };
+    const options = { upsert: true, new: true };
 
-    if (basketItem) {
-        basketItem.quantity += quantity;
-        await basketItem.save();
-    } else {
-        basketItem = await Basket.create({
-            userId: session.user.id,
-            productId,
-            quantity,
-        })
-    }
-
-    // Return the basket item with populated product to ensure client has full details immediately
-    const populated = await Basket.findById(basketItem._id).populate("productId");
-    return NextResponse.json(populated);
-
+    const saved = await Basket.findOneAndUpdate(selector, update, options);
+    return NextResponse.json(saved);
   } catch (error) {
-      console.error("Error adding to basket:", error);
-      return new NextResponse("Internal Server Error", { status: 500 });
-
+    console.error("Error adding to basket:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
-
 }
- 
-// DELETE endpoint: decrease quantity or remove item
-export async function DELETE(req) {
 
-    try {
-      await connectToDatabase();
-      const session = await auth();
-      if (!session?.user) {
-        return new NextResponse("Unauthorized", { status: 401 });
-      }
-  
-      const { productId } = await req.json();
-  
-      if (!productId) {
-        return new NextResponse("productId is required", { status: 400 });
-      }
-  
-      // Find basket item
-      const basketItem = await Basket.findOne({
-        userId: session.user.id,
-        productId,
-      });
-  
-      if (!basketItem) {
-        return new NextResponse("Item not found", { status: 404 });
-      }
-  
-      if (basketItem.quantity > 1) {
-        basketItem.quantity -= 1;
-        await basketItem.save();
-        return NextResponse.json({
-          message: "Quantity decreased",
-          quantity: basketItem.quantity,
-        });
-      } else {
-        await Basket.deleteOne({ _id: basketItem._id });
-        return NextResponse.json({
-          message: "Item removed from basket",
-        });
-      }
-    } catch (error) {
-      console.error("Error removing from basket:", error);
-      return new NextResponse("Internal Server Error", { status: 500 });
+// DELETE: decrease quantity or remove item (by userId + productId)
+export async function DELETE(req) {
+  await connectToDatabase();
+  const session = await auth();
+  if (!session?.user) return new NextResponse("Unauthorized", { status: 401 });
+
+  const { productId } = await req.json();
+  if (!productId) return new NextResponse("productId is required", { status: 400 });
+
+  try {
+
+    const item = await Basket.findOne({ userId: session.user.id, productId });
+    if (!item) return new NextResponse("Item not found", { status: 404 });
+
+    if (item.quantity > 1) {
+      item.quantity -= 1;
+      await item.save();
+      return NextResponse.json({ message: "Quantity decreased", quantity: item.quantity });
+    } else {
+      await Basket.deleteOne({ _id: item._id });
+      return NextResponse.json({ message: "Item removed from basket" });
     }
+  } catch (error) {
+    console.error("Error removing from basket:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
 }

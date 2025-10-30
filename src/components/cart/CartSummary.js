@@ -1,15 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import CheckoutButton from '../checkoutButton/CheckoutButton';
 
 const CartSummary = ({ items, classNames }) => {
-  const subtotal = items
-    .reduce((acc, item) => acc + Number(item.quantity || 0) * Number(item.productId?.price || 0), 0)
-    .toFixed(2);
+  const subtotalNumber = (items || [])
+    .reduce((acc, item) => acc + Number(item?.quantity || 0) * Number(item?.price || 0), 0);
+  const subtotal = subtotalNumber.toFixed(2);
 
-  const total = subtotal; // No taxes/shipping logic yet
-  const isDisabled = subtotal <= 0;
+  const totalNumber = subtotalNumber; // No taxes/shipping logic yet
+  const total = totalNumber.toFixed(2);
+  const isDisabled = totalNumber <= 0;
 
   return (
     <div className={classNames?.container}>
@@ -27,7 +27,7 @@ const CartSummary = ({ items, classNames }) => {
       >
         Buy
       </Link>
-      {/* <CheckoutButton /> */}
+       
     </div>
   );
 };

@@ -1,39 +1,33 @@
 'use client';
 import { useBasket } from "@/contexts/BasketContext";
-import Image from "next/image";
 import CartItem from "@/components/cart/CartItem";
 import styles from "./cart.module.scss";
-import Link from "next/link";
 import CartSummary from "@/components/cart/CartSummary";
-// import AppleStyleSlider from "@/components/Swiper";
 import AppleStyleSlider from "@/components/swiper/Swiper";
 
-
- 
-
 const Cart = () => {
-  const { basket, addToBasket, setBasket, removeFromBasket } = useBasket(); // setBasket may be needed for delete
-  
+  const { basket, addToBasket, removeFromBasket } = useBasket();
 
-  const handleIncrease = (productId) => {
-    addToBasket(productId, 1); // increase quantity by 1
+  // Increase quantity
+  const handleIncrease = (productSlug) => {
+    addToBasket(productSlug, 1);
   };
 
-  const handleDecrease = async (productId) => {
-    removeFromBasket(productId);
+  // Decrease quantity
+  const handleDecrease = (productSlug) => {
+    removeFromBasket(productSlug);
   };
 
-  const handleRemove = async (productId) => {
+  // Remove entire item from cart
+  const handleRemove = async (productSlug) => {
     try {
       const res = await fetch("/api/basket", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
+        body: JSON.stringify({ productSlug }),
       });
 
-      if (res.ok) {
-        setBasket(prev => prev.filter(item => item.productId._id !== productId));
-      } else {
+      if (!res.ok) {
         console.error("Failed to remove item:", await res.text());
       }
     } catch (err) {
@@ -46,20 +40,24 @@ const Cart = () => {
       <div className={styles.bag}>
         <div className={styles.bagLeft}>
           <h1 className={styles.bagTitle}>Bag</h1>
-          {basket.length === 0 ? <p>Your cart is empty</p> : (
+
+          {basket.length === 0 ? (
+            <p>Your cart is empty</p>
+          ) : (
             <ul>
               {basket.map((item) => (
                 <CartItem
-                  key={item._id || item.productId?._id}
+                  key={item._id}
                   item={item}
-                  onIncrease={handleIncrease}
-                  onDecrease={handleDecrease}
-                  onRemove={handleRemove}
+                  onIncrease={() => handleIncrease(item.productSlug)}
+                  onDecrease={() => handleDecrease(item.productSlug)}
+                  onRemove={() => handleRemove(item.productSlug)}
                 />
               ))}
             </ul>
           )}
         </div>
+
         <div className={styles.bagRight}>
           <CartSummary
             items={basket}
@@ -71,15 +69,13 @@ const Cart = () => {
               disabledButton: styles.bagBtnDisabled,
             }}
           />
-          {/* <Link className={styles.bagBtn} href="/checkout">Checkout</Link> */}
-        </div> 
-        
+        </div>
       </div>
+
       <div>
         <AppleStyleSlider />
       </div>
     </section>
-     
   );
 };
 

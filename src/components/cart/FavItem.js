@@ -5,10 +5,11 @@ import styles from './CartItem.module.scss';
 
 const FavItem = ({ item }) => {
   if (!item) return null;
-  const image = item.image || item.productId?.image;
-  const name = item.name || item.productId?.name || 'Product';
-  const description = item.description || item.productId?.description;
-  const price = item.price || item.productId?.price;
+  // item now comes as enriched Sanity product shape from /api/favorites GET
+  const image = item.imageUrl || item.image; // support legacy
+  const name = item.name || 'Product';
+  const description = item.details || item.description;
+  const price = item.price;
 
   
 

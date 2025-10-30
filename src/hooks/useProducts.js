@@ -7,10 +7,10 @@ export function useProducts(limit = 10) {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch("/api/products");
+        const res = await fetch("/api/sanity-products");
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
-         
+        console.log("data", data);
         setProducts(data);
       } catch (error) {
         console.error(error);

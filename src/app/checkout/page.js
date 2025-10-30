@@ -16,7 +16,6 @@ const CheckoutPage = () => {
      
     const [loading, setLoading] = useState(true);
 
-
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
@@ -69,7 +68,6 @@ const CheckoutPage = () => {
                         {userInfo && !loading && <div>
                             <CheckoutButton />
                         </div>}
-                        
                     </div>
 
                     {/* Order Summary Section */}
@@ -82,7 +80,7 @@ const CheckoutPage = () => {
 
                 {/* Right Side Cart Summary */}
                 <div className={`${styles.bagRight} ${isDisabled ? styles.disabledSection : ""}`}>
-                    {/* <CartSummary
+                    <CartSummary
                         items={basket}
                         classNames={{
                             container: styles.bagRight,
@@ -90,7 +88,7 @@ const CheckoutPage = () => {
                             divider: styles.bagLine,
                             button: styles.bagBtn,
                         }}
-                    /> */}
+                    />
                 </div>
             </section>
         </div>

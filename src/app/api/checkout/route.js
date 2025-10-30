@@ -16,24 +16,34 @@ export async function POST(req) {
     }
 
     try {
-        const basket = await Basket.find({ userId: session.user.id }).populate("productId");
+        const basket = await Basket.find({ userId: session.user.id });
 
         if (!basket || basket.length === 0) {
-            return new Response("Basket is empty", { status: 400 });
+            return NextResponse.json({ error: "Basket is empty" }, { status: 400 });
         }
 
-        // Map basket items to Stripe line items
-        const line_items = basket.map(item => ({
-            price_data: {
-            currency: "gbp", // UK Pounds
-            product_data: {
-                name: item.productId.name,
-                description: item.productId.description || "",
-            },
-            unit_amount: Math.round(item.productId.price * 100), // in pence
-            },
-            quantity: item.quantity,
-        }));
+        // Map basket snapshot fields to Stripe line items
+        const line_items = basket
+            .filter(item => {
+                // Validate required fields
+                const price = Number(item.price);
+                const quantity = Number(item.quantity || 1);
+                return price > 0 && quantity > 0 && item.name;
+            })
+            .map(item => ({
+                price_data: {
+                    currency: "gbp",
+                    product_data: {
+                        name: String(item.name),
+                    },
+                    unit_amount: Math.round(Number(item.price) * 100), // in pence
+                },
+                quantity: Number(item.quantity || 1),
+            }));
+
+        if (line_items.length === 0) {
+            return NextResponse.json({ error: "No valid items in basket" }, { status: 400 });
+        }
 
         // Create Stripe checkout session
         const stripeSession = await stripe.checkout.sessions.create({
@@ -46,11 +56,11 @@ export async function POST(req) {
             userId: session.user.id,
             },
         });
-        return new Response(JSON.stringify({ id: stripeSession.id }), { status: 200 });
+        return NextResponse.json({ id: stripeSession.id });
 
 
     } catch (err) {
         console.log("Stripe checkout error:", err);
-        return new NextResponse(JSON.stringify({ error: err.message }), { status: 500 });
+        return NextResponse.json({ error: err.message }, { status: 500 });
     } 
 }

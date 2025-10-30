@@ -16,12 +16,16 @@ const Header = () => {
   const { refreshBasket } = useBasket();
   const { favoritesCount } = useFavorites();
   const { refreshFavorites } = useFavorites();
+  const { toggleFavorite } = useFavorites()
 
   useEffect(() => {
-    
     if (status === 'authenticated') {
       refreshBasket(); // Refresh when user logs in
       refreshFavorites();
+      console.log("am done loading")
+    }
+    if (status === 'loading') {
+      console.log("Hey am still loading")
     }
   }, [status, session?.user?.id]);
 

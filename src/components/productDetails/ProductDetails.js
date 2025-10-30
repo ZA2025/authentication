@@ -1,71 +1,76 @@
 'use client';
-import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation'; 
+import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
-import styles from './ProductDetails.module.scss';
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { Heart } from "lucide-react"; 
-import { useBasket } from "@/contexts/BasketContext"; // ✅ import Basket context
+import { Heart } from "lucide-react";
+import styles from './ProductDetails.module.scss';
+import { useBasket } from "@/contexts/BasketContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
- 
+
 const ProductDetails = ({ product }) => {
   const router = useRouter();
   const { data: session } = useSession();
+  const { addToBasket } = useBasket();
+  const { favorites, toggleFavorite } = useFavorites();
   const [isFavorite, setIsFavorite] = useState(false);
-  const { addToBasket } = useBasket(); // ✅ get basket function from context
-  const { addToFavorites } = useFavorites();
-  const { removeFromFavorites } = useFavorites();
+  const { fetchFavorites } = useFavorites();
 
-  // --- FAVORITES ---
-  const fetchFavorite = async () => {
-    if (session?.user && product?._id) {
-      try {
-        const res = await fetch("/api/favorites");
-        if (res.ok) {
-          const data = await res.json();
-          const favIds = data
-            .filter(fav => fav.productId && fav.productId._id)
-            .map(fav => fav.productId._id);
-          setIsFavorite(favIds.includes(product._id));
-        }
-      } catch (error) {
-        console.error("Error fetching favorites:", error);
-      }
-    }
+  if (!product) {
+    return <div className="inner-section">Product not found.</div>;
+  }
+
+  // Safe fields
+  const imageUrl =
+    product?.imageUrl ||
+    product?.image?.asset?.url ||
+    "/images/fallback.png";
+
+  const description = product?.details || "";
+
+  const slugValue =
+    typeof product?.slug === "string"
+      ? product.slug
+      : product?.slug?.current || "";
+
+
+  // ✅ FIXED useEffect dependencies:
+  useEffect(() => {
+    if (!product?._id) return;
+    const found = favorites.some(f => f.productId === product._id);
+    setIsFavorite(found);
+  }, [favorites, product?._id]); // ✅ re-run when global favorites change
+
+  // ----- Basket -----
+  const handleAddToBasket = async () => {
+    await addToBasket(
+      {
+        id: String(product?._id || ""),
+        name: String(product?.name || ""),
+        price: Number(product?.price ?? 0),
+        imageUrl,
+        slug: slugValue,
+      },
+      1
+    );
   };
 
-  useEffect(() => {
-    fetchFavorite();
-  }, [session, product._id]);
-
-  const toggleFavorite = async () => {
-    if (!session?.user) {
-      router.push("/login");
-      return;
-    }
-    if (!product?._id) return;
-
-    try {
-      if (isFavorite) {
-        await removeFromFavorites(product._id);
-        setIsFavorite(false);
-      } else {
-        await addToFavorites(product._id);
-        setIsFavorite(true);
-      }
-      fetchFavorite();
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-    }
+  const handleToggleFavorite = () => {
+    toggleFavorite({
+      id: product._id,
+      name: product.name,
+      imageUrl,
+      slug: slugValue,
+    });
   };
 
   return (
     <div className={styles.product}>
       <div className={`${styles.productCol} ${styles.left}`}>
         <Image
-          src="/images/tshirt.jpeg"
-          alt={product.name}
+          src={imageUrl}
+          alt={product?.name || "Product image"}
           width={630}
           height={630}
           className={styles.productImage}
@@ -74,29 +79,34 @@ const ProductDetails = ({ product }) => {
 
       <div className={`${styles.productCol} ${styles.right}`}>
         <div className={styles.productInfo}>
-          <h1 className={styles.productName}>{product.name}</h1>
-          <p className={styles.productDetails}>{product.description}</p>
-          <p className={styles.productPrice}>£{product.price}</p>
+          <h1 className={styles.productName}>{product?.name}</h1>
+          {description && <p className={styles.productDetails}>{description}</p>}
+          {typeof product?.price === "number" && (
+            <p className={styles.productPrice}>£{product.price}</p>
+          )}
 
-          {/* ✅ Use context addToBasket */}
           <button
-            onClick={() => addToBasket(product._id, 1)}
+            onClick={handleAddToBasket}
             className={styles.productLink}
+            disabled={!product?._id}
+            title={!product?._id ? "Product id unavailable for basket" : ""}
           >
             Buy It
           </button>
-
-          {/* ❤️ Favorite Button */}
-          <button
-            onClick={toggleFavorite}
-            className={styles.productFavorit}
-          >
+          {/* ✅ Uses synced state */}
+          <button onClick={handleToggleFavorite} className={styles.productFavorite}>
             <Heart
               size={22}
               className={isFavorite ? "text-red-500 fill-red-500" : "text-gray-400"}
             />
             {isFavorite ? " Remove from Favorites" : " Add to Favorites"}
           </button>
+           
+          <div style={{ marginTop: 16 }}>
+            <Link href="/products" className={styles.cardLink}>
+              Back to products
+            </Link>
+          </div>
         </div>
       </div>
     </div>

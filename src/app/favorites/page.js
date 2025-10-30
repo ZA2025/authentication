@@ -16,8 +16,8 @@ const FavoritesPage = () => {
                 <ul>
                     {favorites.map((favorite) => (
                         <FavItem
-                            key={favorite._id || favorite.productId?._id}
-                            item={favorite.productId || favorite}
+                            key={favorite._id}
+                            item={favorite}
                         />
                     ))}
                 </ul>

@@ -10,14 +10,23 @@ export default function CheckoutButton() {
     
   const handleCheckout = async () => {
     const stripe = await stripePromise;
+    if (!stripe) {
+      console.error("Stripe not initialized. Check NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY");
+      return;
+    }
 
     const res = await fetch("/api/checkout", { method: "POST" });
     const data = await res.json();
 
+    if (!res.ok) {
+      console.error("Checkout error:", data.error || `HTTP ${res.status}`);
+      return;
+    }
+
     if (data.id) {
       await stripe.redirectToCheckout({ sessionId: data.id });
     } else {
-      console.error("Checkout error:", data.error);
+      console.error("Checkout error: No session ID returned");
     }
   };
 
