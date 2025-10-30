@@ -15,7 +15,12 @@ const ProductDetails = ({ product }) => {
   const { addToBasket } = useBasket();
   const { favorites, toggleFavorite } = useFavorites();
   const [isFavorite, setIsFavorite] = useState(false);
-  const { fetchFavorites } = useFavorites();
+
+  useEffect(() => {
+    if (!product?._id) return;
+    const found = favorites.some(f => f.productId === product._id);
+    setIsFavorite(found);
+  }, [favorites, product?._id]);  
 
   if (!product) {
     return <div className="inner-section">Product not found.</div>;
@@ -34,13 +39,6 @@ const ProductDetails = ({ product }) => {
       ? product.slug
       : product?.slug?.current || "";
 
-
-  // ✅ FIXED useEffect dependencies:
-  useEffect(() => {
-    if (!product?._id) return;
-    const found = favorites.some(f => f.productId === product._id);
-    setIsFavorite(found);
-  }, [favorites, product?._id]); // ✅ re-run when global favorites change
 
   // ----- Basket -----
   const handleAddToBasket = async () => {
