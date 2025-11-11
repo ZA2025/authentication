@@ -28,7 +28,7 @@ export default function CancelPage() {
 
   return (
     <div className="inner-section">
-      <h1>❌ Payment Cancelled</h1>
+      <h1>Payment Cancelled</h1>
       <p>
         No worries {session?.user?.name || "guest"}, you can try again anytime.
       </p>

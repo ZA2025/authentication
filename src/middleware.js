@@ -13,6 +13,9 @@ import {
 } from "@/lib/routes";
 
 export async function middleware(request) {
+  if (request.nextUrl.pathname === "/api/webhook") {
+    return NextResponse.next();
+  }
   const { nextUrl } = request;
   const session = await auth();
  

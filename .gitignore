@@ -42,5 +42,9 @@ yarn-error.log*
 next-env.d.ts
 scripts/makeAdmin.js
 
- 
+# macOS system files
+.DS_Store
+.AppleDouble
+._*
+
 
