@@ -6,9 +6,7 @@ import Basket from "@/model/basket";
 
 export const runtime = "nodejs";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-08-27",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(req) {
   const signature = req.headers.get("stripe-signature");
