@@ -2,13 +2,12 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import connectToDatabase from "@/lib/mongodb";
 import Order from "@/model/order";
-import Basket from "@/model/basket"; // optional, if you still want to clear the basket
+import Basket from "@/model/basket";
 
-// Ensure Node.js runtime (required by Stripe SDK)
 export const runtime = "nodejs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-08-27", // use your exact Stripe API version
+  apiVersion: "2025-08-27",
 });
 
 export async function POST(req) {
@@ -24,10 +23,7 @@ export async function POST(req) {
     );
   } catch (err) {
     console.error("❌ Webhook signature verification failed:", err.message);
-    return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: err.message }, { status: 400 });
   }
 
   try {
@@ -36,100 +32,104 @@ export async function POST(req) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object;
+        const userId = session.metadata?.userId;
+        console.log("📦 checkout.session.completed for:", userId);
 
-        // Avoid creating duplicate orders
+        if (!userId) throw new Error("Missing userId in session metadata");
+
+        // Prevent duplicates (unique index)
         const existingOrder = await Order.findOne({
           stripeCheckoutSessionId: session.id,
         });
-        if (existingOrder) break;
+        if (existingOrder) {
+          console.log("⚠️ Order already exists for session:", session.id);
+          break;
+        }
 
-        const userId = session.metadata?.userId;
-        if (!userId) throw new Error("Missing userId in session.metadata");
+        console.log("🟦 Fetching Stripe line items...");
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
 
-        // ✅ Fetch confirmed purchased items directly from Stripe
-        const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
-          expand: ["data.price.product"],
-        });
-
+        // ✅ Safely normalize all line items
         const items = lineItems.data.map((item) => {
-          const unitPrice =
-            item.amount_subtotal && item.quantity
-              ? item.amount_subtotal / 100 / item.quantity
-              : 0;
+          const unitPrice = item.amount_subtotal
+            ? item.amount_subtotal / 100 / (item.quantity || 1)
+            : 0;
           const lineTotal = item.amount_subtotal ? item.amount_subtotal / 100 : 0;
           return {
-            productId: item.price?.product || "",
-            name: item.description || "",
-            imageUrl: "", // Stripe doesn’t include this by default — optional to fill later
+            productId: String(item.price?.product || "unknown_product"),
+            name: String(item.description || "Unnamed item"),
+            imageUrl: "",
             slug: "",
-            unitPrice,
-            quantity: item.quantity,
-            lineTotal,
+            unitPrice: Number(unitPrice),
+            quantity: Number(item.quantity || 1),
+            lineTotal: Number(lineTotal),
           };
         });
 
         const subtotal = items.reduce((sum, it) => sum + it.lineTotal, 0);
+        const grandTotal = session.amount_total
+          ? session.amount_total / 100
+          : subtotal;
         const currency = session.currency || "gbp";
-        const grandTotal =
-          (session.amount_total ?? Math.round(subtotal * 100)) / 100;
-        const taxTotal = 0;
-        const shippingTotal = 0;
-        const discountTotal = Math.max(0, subtotal - grandTotal);
 
-        const shipping = session.customer_details?.address;
-        const shippingAddress = shipping
-          ? {
-              name: session.customer_details?.name || "",
-              line1: shipping.line1 || "",
-              line2: shipping.line2 || "",
-              city: shipping.city || "",
-              postal_code: shipping.postal_code || "",
-              country: shipping.country || "",
-              phone: session.customer_details?.phone || "",
-            }
-          : undefined;
-
-        // ✅ Create the order record
-        await Order.create({
+        // Always ensure required fields exist
+        const orderData = {
           userId,
           email: session.customer_details?.email || session.customer_email || "",
           stripeCheckoutSessionId: session.id,
           stripePaymentIntentId: session.payment_intent || "",
           currency,
-          subtotal,
-          taxTotal,
-          shippingTotal,
-          discountTotal,
-          grandTotal,
+          subtotal: Number(subtotal || grandTotal),
+          taxTotal: 0,
+          shippingTotal: 0,
+          discountTotal: 0,
+          grandTotal: Number(grandTotal),
           items,
           status: "paid",
-          shippingAddress,
+          shippingAddress: {
+            name: session.customer_details?.name || "",
+            line1: session.customer_details?.address?.line1 || "",
+            line2: session.customer_details?.address?.line2 || "",
+            city: session.customer_details?.address?.city || "",
+            postal_code: session.customer_details?.address?.postal_code || "",
+            country: session.customer_details?.address?.country || "",
+            phone: session.customer_details?.phone || "",
+          },
           billingEmail:
             session.customer_email || session.customer_details?.email || "",
-        });
+        };
 
-        // ✅ (Optional) clear user basket
-        await Basket.deleteMany({ userId });
-
+        console.log("🟩 Creating Order:", orderData);
+        await Order.create(orderData);
         console.log("✅ Order successfully created for user:", userId);
+
+        // ✅ Clear basket safely
+        try {
+          await Basket.deleteMany({ userId });
+          console.log("🧹 Basket cleared for:", userId);
+        } catch (err) {
+          console.warn("⚠️ Basket cleanup failed:", err.message);
+        }
+
         break;
       }
 
-      // Handle other optional Stripe events
       case "payment_intent.succeeded":
         console.log("💰 Payment intent succeeded");
         break;
+
       case "payment_intent.payment_failed":
         console.log("⚠️ Payment failed");
         break;
+
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        console.log(`ℹ️ Unhandled event type: ${event.type}`);
         break;
     }
 
     return NextResponse.json({ received: true });
   } catch (err) {
-    console.error("⚠️ Webhook handler error:", err);
+    console.error("🔥 Webhook handler error:", err);
     return NextResponse.json(
       { error: `Webhook handler error: ${err.message}` },
       { status: 500 }
