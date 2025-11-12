@@ -8,7 +8,7 @@ import Basket from "@/model/basket"; // optional, if you still want to clear the
 export const runtime = "nodejs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-06-20", // use your exact Stripe API version
+  apiVersion: "2025-08-27", // use your exact Stripe API version
 });
 
 export async function POST(req) {
