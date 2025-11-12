@@ -1,16 +1,14 @@
-// src/app/api/webhook/route.js
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import connectToDatabase from "@/lib/mongodb";
-import Basket from "@/model/basket";
 import Order from "@/model/order";
+import Basket from "@/model/basket"; // optional, if you still want to clear the basket
 
-// Ensure this runs on the Node.js runtime (Stripe SDK requires Node)
+// Ensure Node.js runtime (required by Stripe SDK)
 export const runtime = "nodejs";
 
-// Optional but recommended: pin to your Stripe API version (set to your dashboard value)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-06-20", // replace with your exact dashboard API version
+  apiVersion: "2024-06-20", // use your exact Stripe API version
 });
 
 export async function POST(req) {
@@ -25,68 +23,59 @@ export async function POST(req) {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
+    console.error("❌ Webhook signature verification failed:", err.message);
     return NextResponse.json(
-      { error: `Webhook signature verification failed: ${err.message}` },
+      { error: `Webhook Error: ${err.message}` },
       { status: 400 }
     );
   }
 
   try {
-    // Ensure DB connection for all handlers
     await connectToDatabase();
 
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object;
-        // Idempotency: don't create duplicate orders for the same session
-        const existing = await Order.findOne({
+
+        // Avoid creating duplicate orders
+        const existingOrder = await Order.findOne({
           stripeCheckoutSessionId: session.id,
         });
-        if (existing) {
-          break;
-        }
+        if (existingOrder) break;
 
         const userId = session.metadata?.userId;
-        if (!userId) {
-          throw new Error("Missing userId in session.metadata");
-        }
+        if (!userId) throw new Error("Missing userId in session.metadata");
 
-        // Load user's basket at time of purchase
-        const basketItems = await Basket.find({ userId });
-        if (!basketItems || basketItems.length === 0) {
-          // Still record an order with zero items to align totals from Stripe
-          // but usually this indicates the basket was cleared too early
-          console.warn("Basket empty when processing checkout.session.completed", {
-            userId,
-            sessionId: session.id,
-          });
-        }
+        // ✅ Fetch confirmed purchased items directly from Stripe
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+          expand: ["data.price.product"],
+        });
 
-        // Build line items snapshot
-        const items = (basketItems || []).map((item) => {
-          const unitPrice = Number(item.price) || 0;
-          const quantity = Number(item.quantity) || 1;
-          const lineTotal = unitPrice * quantity;
+        const items = lineItems.data.map((item) => {
+          const unitPrice =
+            item.amount_subtotal && item.quantity
+              ? item.amount_subtotal / 100 / item.quantity
+              : 0;
+          const lineTotal = item.amount_subtotal ? item.amount_subtotal / 100 : 0;
           return {
-            productId: String(item.productId),
-            name: String(item.name),
-            imageUrl: String(item.imageUrl || ""),
-            slug: String(item.slug || ""),
+            productId: item.price?.product || "",
+            name: item.description || "",
+            imageUrl: "", // Stripe doesn’t include this by default — optional to fill later
+            slug: "",
             unitPrice,
-            quantity,
+            quantity: item.quantity,
             lineTotal,
           };
         });
 
         const subtotal = items.reduce((sum, it) => sum + it.lineTotal, 0);
         const currency = session.currency || "gbp";
-        const grandTotal = (session.amount_total ?? Math.round(subtotal * 100)) / 100;
-        // Note: without a tax/shipping breakdown, set them to zero for now
+        const grandTotal =
+          (session.amount_total ?? Math.round(subtotal * 100)) / 100;
         const taxTotal = 0;
         const shippingTotal = 0;
         const discountTotal = Math.max(0, subtotal - grandTotal);
 
-        // Optional: map shipping/billing snapshots from Stripe
         const shipping = session.customer_details?.address;
         const shippingAddress = shipping
           ? {
@@ -100,6 +89,7 @@ export async function POST(req) {
             }
           : undefined;
 
+        // ✅ Create the order record
         await Order.create({
           userId,
           email: session.customer_details?.email || session.customer_email || "",
@@ -114,33 +104,32 @@ export async function POST(req) {
           items,
           status: "paid",
           shippingAddress,
-          billingEmail: session.customer_email || session.customer_details?.email || "",
+          billingEmail:
+            session.customer_email || session.customer_details?.email || "",
         });
 
-        // Clear basket after successful order creation
+        // ✅ (Optional) clear user basket
         await Basket.deleteMany({ userId });
 
-        // TODO: send confirmation email here
-
+        console.log("✅ Order successfully created for user:", userId);
         break;
       }
 
-      case "checkout.session.async_payment_succeeded":
-      case "checkout.session.async_payment_failed":
-      case "checkout.session.expired":
+      // Handle other optional Stripe events
       case "payment_intent.succeeded":
-      case "payment_intent.payment_failed":
-        // Handle other events as needed
+        console.log("💰 Payment intent succeeded");
         break;
-
+      case "payment_intent.payment_failed":
+        console.log("⚠️ Payment failed");
+        break;
       default:
-        // Ignore unhandled event types
+        console.log(`Unhandled event type: ${event.type}`);
         break;
     }
 
     return NextResponse.json({ received: true });
   } catch (err) {
-    // Catch and report any processing errors so Stripe can retry if needed
+    console.error("⚠️ Webhook handler error:", err);
     return NextResponse.json(
       { error: `Webhook handler error: ${err.message}` },
       { status: 500 }

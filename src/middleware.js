@@ -13,7 +13,8 @@ import {
 } from "@/lib/routes";
 
 export async function middleware(request) {
-  if (request.nextUrl.pathname === "/api/webhook") {
+  if (request.nextUrl.pathname.startsWith === "/api/webhook") {
+    console.log("Webhook request");
     return NextResponse.next();
   }
   const { nextUrl } = request;
@@ -42,22 +43,20 @@ export async function middleware(request) {
   // Add security headers
   const response = NextResponse.next();
 
-  // Security headers
+  // ✅ Add security headers
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'origin-when-cross-origin');
   response.headers.set('X-XSS-Protection', '1; mode=block');
-
-  // Content Security Policy
   response.headers.set(
     'Content-Security-Policy',
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://checkout.stripe.com; " +
-    "style-src 'self' 'unsafe-inline'; " +
-    "img-src 'self' data: https:; " +
-    "font-src 'self' data:; " +
-    "connect-src 'self' https: https://api.stripe.com; " +
-    "frame-src 'self' https://js.stripe.com https://checkout.stripe.com;"
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://checkout.stripe.com; " +
+      "style-src 'self' 'unsafe-inline'; " +
+      "img-src 'self' data: https:; " +
+      "font-src 'self' data:; " +
+      "connect-src 'self' https: https://api.stripe.com; " +
+      "frame-src 'self' https://js.stripe.com https://checkout.stripe.com;"
   );
 
   return response;
@@ -68,7 +67,8 @@ export async function middleware(request) {
 
 export const config = {
   matcher: [
-    "/((?!.+\\.[\\w]+$|_next).*)",
+    // Match everything EXCEPT files, _next, and the webhook
+    "/((?!api/webhook|_next|.*\\..*).*)",
     "/api/admin/:path*"
   ],
 };
