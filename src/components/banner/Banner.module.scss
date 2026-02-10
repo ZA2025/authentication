@@ -1,55 +1,43 @@
 @use '../../styles/mixins.scss' as *;
-.bannerContainer {
-    position: relative;
-    width: 100%;
-    background-color: #ddf8ff; 
-    padding: 50px 0;
-    height: 100vh;
-}
 .banner {
     position: relative;
     width: 100%;
-    display: flex;
-    gap: 20px;
-    max-width: 1280px;
-    margin: 0 auto;
-    box-sizing: border-box;
-
-    &Title {
-        font-weight: 900;
+    height: 100vh;
+    background-image: url("/images/cookieez.png");
+    background-repeat: repeat;        /* repeat | repeat-x | repeat-y | no-repeat */
+    background-size: auto;
+    max-height: 500px;
+    background-position: 50% 50%;       /* start tiling from center */
+    background-size: auto;  
+    padding-top: 30px;
+    &Info {
+        background-color: #fff;
+        padding: 30px;
+        max-width: 300px;
+        margin-left: 40px;
+        border-radius: 3px; 
+    }
+    &Text {
         margin-bottom: 20px;
-    }
-
-    &Link {
-        @include button-primary(black, gray, white);
-        max-width: fit-content;
-        margin-top: 40px;
-    }
-    
-    &ColLeft {
-        position: relative;
-        width: 100%;
-        
-    }
-
-    &ColRight {
-        position: absolute;
-        width: 50%;
-        right: 0;
-        top: 180px;
-    }
-    &Image {
-        width: 100%;
-        height: auto;
-        max-width: 700px;
     }
     &Title {
         font-size: 24px;
+        font-weight: bold;
     }
-    &Description {
-        font-size: 16px;
+    &Link {
+        font-weight: bold;
+        text-decoration: none;
+        outline: 0;
+        display: inline-block;
+        line-height: 1;
+        &::after {
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgb(237, 96, 230);
+            content: "";
+            display: block;
+            width: 100%;
+            
+        }
     }
-    &Inner {
-        max-width: 500px;
-    }
+
 }

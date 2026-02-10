@@ -14,8 +14,13 @@
     @media screen and (min-width: 1280px) {
         padding: 50px 0px;
     }
+    &BackBtn {
+        text-decoration: underline;
+        font-weight: bold;
+    }
     &Name {
         font-size: 18px;
+        font-weight: bold;
         @media screen and (min-width: 768px)  {
             font-size: 24px;
         }
@@ -46,6 +51,7 @@
    
     &Link {
         @include button-primary(black, gray, white);
+         
     }
      
     &Price {
@@ -53,8 +59,56 @@
         margin-bottom: 20px;
     }
     &Favorite {
-        @include button-primary(black, gray, white);
-        
+        @include button-primary($pink, gray, $lightpink);
+        svg {
+            width: 15px;
+            height: fit-content;
+            fill: rgb(255, 141, 215);
+            border: none;
+        }
+    }
+    &SizeSelector {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    &SizeLabel {
+        font-weight: bold;
+        font-size: 16px;
+    }
+    &SizeSelect {
+        padding: 8px 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: white;
+        cursor: pointer;
+        &:focus {
+            outline: none;
+            border-color: $pink;
+        }
+        option:disabled {
+            color: #999;
+            background-color: #f5f5f5;
+        }
+    }
+    &StockInfo {
+        margin-top: 10px;
+        margin-bottom: 15px;
+        p {
+            margin: 0;
+            font-size: 14px;
+        }
+    }
+    &Buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+         
+    }
+    &Link {
+        @include button-primary($pink, gray, $lightpink);
          
     }
 }

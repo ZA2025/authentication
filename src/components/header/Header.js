@@ -49,14 +49,22 @@ const Header = () => {
     <header className={styles.header}>
       <nav className={styles.nav}>
         <div className={styles.navLogoContainer}>
-          LOGO
+        <Link href="/">
+          <Image 
+            src="/images/Cookiez.png" 
+            alt="logo" 
+            width={500} 
+            height={72} 
+            className={styles.navLogo}
+          />
+          </Link>
         </div>
         <ul className={`${styles.navList} ${isOpen ? styles.navListOpen : ''}`}>
-          <li className={styles.navItem}>
+          {/* <li className={styles.navItem}>
             <Link className={styles.navLink} href="/" onClick={closeMenu}>
               Home
             </Link>
-          </li>
+          </li> */}
           <li className={styles.navItem}>
             <Link className={styles.navLink} href="/products">
               Products

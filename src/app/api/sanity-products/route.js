@@ -11,6 +11,7 @@ export async function GET() {
       details,
       category,
       stock,
+      sizesStock,
       featured,
       "image": image.asset->_id,
     }`;

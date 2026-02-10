@@ -82,6 +82,7 @@ const CheckoutPage = () => {
                 <div className={`${styles.bagRight} ${isDisabled ? styles.disabledSection : ""}`}>
                     <CartSummary
                         items={basket}
+                        hideBuyButton={userInfo && !loading}
                         classNames={{
                             container: styles.bagRight,
                             title: styles.bagSummary1,

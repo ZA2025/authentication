@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-      domains: ['picsum.photos', 'fakestoreapi.com', 'cdn.sanity.io'],
+      remotePatterns: [
+        { protocol: 'https', hostname: 'picsum.photos', pathname: '/**' },
+        { protocol: 'https', hostname: 'fakestoreapi.com', pathname: '/**' },
+        { protocol: 'https', hostname: 'cdn.sanity.io', pathname: '/**' },
+      ],
     },
   
     async headers() {

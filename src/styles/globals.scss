@@ -1,3 +1,4 @@
+ 
 @use './variables' as *;
 @use './mixins.scss' as *;
 
@@ -229,12 +230,8 @@ a {
     padding-top: 60px !important;
     
     .swiper-slide {
-        // max-width: 300px;
-        img {
-            
-            width: 100%;
-            height: auto;
-        }
+        background-color: rgb(230, 230, 230);
+         
     }
 }
 .apple-swiper {

@@ -1,0 +1,25 @@
+@use '../../styles/variables.scss' as *;
+@use '../../styles/mixins.scss' as *;
+.slideImage {
+    position: relative;
+    text-align: center;
+    padding: 20px;
+    img {
+            
+        width: 100%;
+        height: auto;
+        max-width: 90%;
+        margin: 0 auto;
+    }
+}
+.slideInfo {
+    padding: 20px;
+    text-align: center;
+}
+.slideInfo {
+    &Cta {
+        @include button-primary(rgb(57, 56, 56), $pink, white);
+        max-width: fit-content;
+    }
+}
+ 

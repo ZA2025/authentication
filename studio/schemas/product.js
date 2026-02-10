@@ -52,9 +52,41 @@ export default {
       },
       {
         name: 'stock',
-        title: 'Stock Quantity',
+        title: 'Stock Quantity (Legacy - use sizesStock instead)',
         type: 'number',
-        validation: Rule => Rule.required().min(0)
+        validation: Rule => Rule.min(0)
+      },
+      {
+        name: 'sizesStock',
+        title: 'Stock by Size',
+        type: 'object',
+        fields: [
+          {
+            name: 'small',
+            title: 'Small',
+            type: 'number',
+            initialValue: 0,
+            validation: Rule => Rule.min(0)
+          },
+          {
+            name: 'medium',
+            title: 'Medium',
+            type: 'number',
+            initialValue: 0,
+            validation: Rule => Rule.min(0)
+          },
+          {
+            name: 'large',
+            title: 'Large',
+            type: 'number',
+            initialValue: 0,
+            validation: Rule => Rule.min(0)
+          },
+        ],
+        options: {
+          collapsible: true,
+          collapsed: false,
+        },
       },
       {
         name: 'featured',

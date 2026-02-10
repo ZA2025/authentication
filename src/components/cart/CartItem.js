@@ -15,12 +15,14 @@ const CartItem = ({ item }) => {
     productId,
     name = '',
     price = 0,
-    imageUrl = '/images/fallback.png',
+    imageUrl = '',
     slug = '',
+    size = 'medium',
     quantity = 0,
   } = item;
 
   const lineTotal = Number(price) * Number(quantity);
+  const displaySize = size || 'medium';
 
   return (
     <li className={styles.cartItem}>
@@ -37,12 +39,13 @@ const CartItem = ({ item }) => {
         <div className={styles.cartItemColLeft}>
           <h3 className={styles.cartItemName}>{name}</h3>
           <p className={styles.cartItemPrice}>£{Number(price).toFixed(2)}</p>
+          <p className={styles.cartItemSize}>Size: {displaySize.charAt(0).toUpperCase() + displaySize.slice(1)}</p>
 
           <div className={styles.cartItemQuantity}>
             <button
               type="button"
               className={styles.cartItemQuantityBtn}
-              onClick={() => decreaseQuantity(productId)}
+              onClick={() => decreaseQuantity(productId, displaySize)}
               aria-label="Decrease"
             >
               -
@@ -51,7 +54,7 @@ const CartItem = ({ item }) => {
             <button
               type="button"
               className={styles.cartItemQuantityBtn}
-              onClick={() => increaseQuantity(productId)}
+              onClick={() => increaseQuantity(productId, displaySize)}
               aria-label="Increase"
             >
               +
@@ -67,7 +70,7 @@ const CartItem = ({ item }) => {
           <button
             type="button"
             className={styles.cartItemBtn}
-            onClick={() => removeItem(productId)}
+            onClick={() => removeItem(productId, displaySize)}
             aria-label="Remove"
           >
             Remove

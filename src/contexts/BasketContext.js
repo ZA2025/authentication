@@ -77,6 +77,7 @@ export const BasketProvider = ({ children }) => {
         typeof product?.slug === "string"
           ? product.slug
           : product?.slug?.current || "",
+      size: product?.size || 'medium',
     };
   
     if (!snapshot.id || !snapshot.name || !Number.isFinite(snapshot.price)) {
@@ -91,16 +92,39 @@ export const BasketProvider = ({ children }) => {
     });
   
     if (!res.ok) {
-      console.error("Add to basket failed", res.status, await res.text());
+      let errorMessage = 'Failed to add item to basket';
+      try {
+        const errorData = await res.json();
+        errorMessage = errorData.error || errorMessage;
+        alert(errorMessage);
+      } catch (e) {
+        try {
+          const errorText = await res.text();
+          if (errorText) {
+            try {
+              const parsed = JSON.parse(errorText);
+              errorMessage = parsed.error || errorMessage;
+            } catch {
+              errorMessage = errorText;
+            }
+          }
+        } catch (e2) {
+          // Could not read error message
+        }
+        if (res.status === 400) {
+          alert(errorMessage);
+        }
+      }
+      console.error("Add to basket failed", res.status, errorMessage);
       return;
     }
   
     const saved = await res.json();
     setBasket(prev => {
-      const exists = prev.find(it => it.productId === saved.productId);
+      const exists = prev.find(it => it.productId === saved.productId && it.size === saved.size);
       return exists
         ? prev.map(it =>
-            it.productId === saved.productId
+            it.productId === saved.productId && it.size === saved.size
               ? { ...it, quantity: it.quantity + (Number(quantity) || 1) }
               : it
           )
@@ -109,8 +133,8 @@ export const BasketProvider = ({ children }) => {
   };
 
   // ✅ Increase quantity
-  const increaseQuantity = async (productId) => {
-    const existing = basket.find(it => it.productId === productId);
+  const increaseQuantity = async (productId, size) => {
+    const existing = basket.find(it => it.productId === productId && (!size || it.size === size));
     if (!existing) return;
   
     // ✅ Map DB shape to expected snapshot shape
@@ -120,6 +144,7 @@ export const BasketProvider = ({ children }) => {
       price: existing.price,
       imageUrl: existing.imageUrl,
       slug: existing.slug,
+      size: existing.size || 'medium',
     };
   
     await addToBasket(product, 1);
@@ -140,16 +165,18 @@ export const BasketProvider = ({ children }) => {
   };
 
   // ✅ Remove item completely
-  const removeItem = async (productId) => {
+  const removeItem = async (productId, size) => {
     try {
-      // keep deleting until item gone
-      const item = basket.find(it => it.productId === productId);
+      const item = basket.find(it => it.productId === productId && (!size || it.size === size));
       if (!item) return;
+      const sizeToUse = size || item.size;
+      
+      // keep deleting until item gone
       for (let i = 0; i < item.quantity; i++) {
         await fetch("/api/basket", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId }),
+          body: JSON.stringify({ productId, size: sizeToUse }),
         });
       }
       await refreshBasket();

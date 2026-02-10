@@ -1,7 +1,7 @@
 @use './variables.scss' as *;
 
 @mixin button-primary(
-  $bg-color: #000,
+  $bg-color: $pink,
   $hover-color: #414142,
   $text-color: #fff
 ) {
@@ -11,16 +11,15 @@
   justify-content: center;
   background-color: $bg-color;
   color: $text-color;
-  padding: 15px 20px;
-  font-size: 16px;
+  padding: 13px 20px;
+  font-size: 14px;
   cursor: pointer;
-  border-radius: 50px;
+   
   border: 0;
   width: 100%;
   font-weight: bold;
   margin-bottom: 20px;
   
-
   &:hover {
     background-color: $hover-color;
     color: $text-color;

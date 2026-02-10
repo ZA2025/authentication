@@ -22,31 +22,38 @@ const ProductList = () => {
 
     return (
         <div className={styles.products}>
-           
-            {products.map((product) => (
-                 
-                  <div key={product._id} className={styles.wrapper}>
-                    <div className={styles.card}>
-                      <div className={styles.cardHeader}>
-                      <Image
-                        src={urlFor(product.image).url()}
-                        alt={product.name}
-                        width={600}
-                        height={600}
-                        className={styles.cardImage}
-                      />
-                        <div className={styles.cardInfo}>
-                          <h1 className={styles.cardTitle}>{product.name}</h1>
-                          <p>{product.details}</p>
-                          <p className={styles.cardPrice}>£{product.price}</p>
-                        </div>
-                        <Link href={`/products/${product.slug.current}`} className={styles.cardLink}>Find out more</Link>
-                        {/* <Link key={`${product.id}-fav`} href={`/products/${product.id}`} className={styles.cardLink}>Favorit</Link> */}
-                      </div>
-                    </div>
-                  </div>
+           <div className={styles.productsWrapper}>
+            {products.map((product) => {
+                const imageUrl = product.image ? urlFor(product.image).url() : "";
+                const slug = product.slug?.current || product._id;
                 
-            ))}
+                if (!imageUrl) return null;
+                
+                return (
+                <div key={product._id} className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    
+                  <div className={styles.cardImage}>
+                  <Image 
+                    src={imageUrl}
+                    alt={product.name}
+                    width={600}
+                    height={600}
+                    className={styles.cardImage}
+                  />
+                  </div>
+                    <div className={styles.cardInfo}>
+                      <h1 className={styles.cardTitle}>{product.name}</h1>
+                      <p>{product.details}</p>
+                      <p className={styles.cardPrice}>£{product.price}</p>
+                    </div>
+                    <Link href={`/products/${slug}`} className={ styles.cardLink}>Find out more</Link>
+                    {/* <Link key={`${product.id}-fav`} href={`/products/${product.id}`} className={styles.cardLink}>Favorit</Link> */}
+                  </div>
+                </div>
+                );
+            })}
+            </div>
         </div>
     );
 };

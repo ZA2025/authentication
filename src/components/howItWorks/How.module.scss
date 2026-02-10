@@ -1,0 +1,27 @@
+@use '../../styles/variables.scss' as *;
+
+.How {
+    width: 100%;
+    position: relative;
+    // background-color: #f2f29a;
+    background-color: #f9ccdf;
+    padding: 50px 0;
+    text-align: center;
+    &Items {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+    }
+    &Item {
+        width: 33.33%;
+        padding: 20px;
+        text-align: center;
+        
+        &Title {    
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+    }
+}

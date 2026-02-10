@@ -2,22 +2,26 @@
 import styles from './Banner.module.scss';
 import Image from 'next/image';
 import Link from 'next/link';
+ 
 
 const Banner = () => {
     return (
-        <div className={styles.bannerContainer}>
-            <div className={styles.banner}>
-                <div className={styles.bannerColLeft}>
-                    <Image className={styles.bannerImage} src="/images/rocket-clouds.png" alt="Banner" width={500} height={500} />
-                </div>
-                <div className={styles.bannerColRight}>
-                    <div className={styles.bannerInner}>
-                        <h2 className={styles.bannerTitle}>The Title Goes Here</h2>
-                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                        <Link className={styles.bannerLink} href="/products">Shop Now</Link>
-                    </div>
-                </div>
+        <div className={styles.banner}>
+            <div className={styles.bannerInfo}>
+                <h2 className={styles.bannerTitle}>Do you have a question?</h2>
+                <p className={styles.bannerText}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dum.</p>
+                <Link href="/contact" className={styles.bannerLink}>Contact us now</Link>
             </div>
+             
+             {/* <Image
+                src="/images/cookieez.png"
+                alt="Banner"
+                width={1024}
+                height={1024}
+                className={styles.bannerImage}
+                priority
+            /> */}
+            
         </div>
          
     );

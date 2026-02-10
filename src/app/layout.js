@@ -1,12 +1,17 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.scss";
- 
 import { SessionProvider } from "next-auth/react";
 import Header from "../components/header/Header";
 import { BasketProvider } from "@/contexts/BasketContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { auth } from "@/auth";
+import Footer from "@/components/footer/Footer";
+// import Deal from "@/components/deal/Deal";
+// import Contact from "@/components/contact/Contact";
+import HowItWorks from "@/components/howItWorks/HowItWorks";
+import Banner from "@/components/banner/Banner";
+import Faqs from "@/components/faq/Faqs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,8 +40,14 @@ export default async function RootLayout({ children }) {
           <AuthProvider>
             <BasketProvider>
               <FavoritesProvider>
+              
                 <Header />
                 {children}
+                 
+                <HowItWorks />
+                <Banner />
+                <Faqs />
+                <Footer />
               </FavoritesProvider>
             </BasketProvider>
           </AuthProvider>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-const CartSummary = ({ items, classNames }) => {
+const CartSummary = ({ items, classNames, hideBuyButton = false }) => {
   const subtotalNumber = (items || [])
     .reduce((acc, item) => acc + Number(item?.quantity || 0) * Number(item?.price || 0), 0);
   const subtotal = subtotalNumber.toFixed(2);
@@ -20,13 +20,15 @@ const CartSummary = ({ items, classNames }) => {
       <p>Total: £{total}</p>
       <hr className={classNames?.divider} />
       
-      <Link
-        href={isDisabled ? "#" : "/checkout"}
-        className={`${classNames?.button} ${isDisabled ? classNames?.disabledButton : ""}`}
-        aria-disabled={isDisabled}
-      >
-        Buy
-      </Link>
+      {!hideBuyButton && (
+        <Link
+          href={isDisabled ? "#" : "/checkout"}
+          className={`${classNames?.button} ${isDisabled ? classNames?.disabledButton : ""}`}
+          aria-disabled={isDisabled}
+        >
+          Buy
+        </Link>
+      )}
        
     </div>
   );

@@ -1,0 +1,21 @@
+.Footer {
+    background-color: #cf267b;
+    color: #fff;
+    padding: 20px 0;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    & ul {
+        list-style: none;
+    }
+    & li {
+        margin-bottom: 10px;
+    }
+    & a {
+        color: #fff;
+        text-decoration: none;
+    }
+}

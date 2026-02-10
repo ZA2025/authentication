@@ -8,12 +8,13 @@ const basketSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     imageUrl: { type: String, default: '' },
     slug: { type: String, default: '' },
+    size: { type: String, enum: ['small', 'medium', 'large'], default: 'medium' },
     quantity: { type: Number, default: 1, min: 1 },
   },
   { timestamps: true }
 );
 
-basketSchema.index({ userId: 1, productId: 1 }, { unique: true });
+basketSchema.index({ userId: 1, productId: 1, size: 1 }, { unique: true });
 
 const Basket = mongoose.models.Basket || mongoose.model('Basket', basketSchema);
 export default Basket;

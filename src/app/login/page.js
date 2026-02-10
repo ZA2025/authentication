@@ -28,7 +28,6 @@ export default function LoginPage() {
             
             {!isAuthenticated && (
                 <>
-                    <h1>Login Page</h1>
                     <CredentialsLoginForm />
                     {/* <LoginForm /> */}
                 </>

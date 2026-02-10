@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import Favorite from "@/model/favorite";
 import connectToDatabase from "@/lib/mongodb";
+import { client } from "@/lib/sanity";
 
 export async function POST(req) {
   await connectToDatabase();
@@ -44,7 +45,53 @@ export async function GET() {
 
   try {
     const favorites = await Favorite.find({ userId: String(session.user.id) }).sort({ updatedAt: -1 });
-    return NextResponse.json(favorites || []);
+    
+    // Enrich favorites with full product details from Sanity
+    const enrichedFavorites = await Promise.all(
+      favorites.map(async (favorite) => {
+        try {
+          const productQuery = `*[_type == "product" && _id == $productId][0]{
+            _id,
+            name,
+            slug,
+            price,
+            details,
+            description,
+            category,
+            stock,
+            featured,
+            "image": image.asset->_id,
+          }`;
+          
+          const product = await client.fetch(productQuery, { productId: favorite.productId });
+          
+          if (product) {
+            // Return enriched favorite with full product details
+            return {
+              ...favorite.toObject(),
+              _id: product._id,
+              name: product.name,
+              price: product.price,
+              details: product.details,
+              description: product.description,
+              category: product.category,
+              stock: product.stock,
+              featured: product.featured,
+              slug: product.slug,
+              image: product.image,
+            };
+          }
+          
+          // If product not found in Sanity, return favorite with stored data
+          return favorite.toObject();
+        } catch (err) {
+          console.error(`Error fetching product ${favorite.productId}:`, err);
+          return favorite.toObject();
+        }
+      })
+    );
+    
+    return NextResponse.json(enrichedFavorites || []);
   } catch (err) {
     console.error("Favorite GET error:", err);
     return new NextResponse("Internal Server Error", { status: 500 });

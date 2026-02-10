@@ -85,11 +85,9 @@ const RegisterationForm = () => {
             const data = await response.json();
 
             if (response.status === 201) {
-                setSuccess('Registration successful! Please check your email to verify your account.');
                 setError(null);
-                // Reset form
-                event.target.reset();
-                setPasswordStrength(0);
+                // Redirect to check-email page with email parameter
+                router.push(`/check-email?email=${encodeURIComponent(email)}`);
             } else if (response.status === 429) {
                 setError('Too many registration attempts. Please try again later.');
             } else {

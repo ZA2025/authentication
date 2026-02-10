@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { useProducts } from "@/hooks/useProducts";
  
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -11,42 +12,20 @@ import { Pagination, Scrollbar, Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import styles from "./Swiper.module.scss";
  
-import { useLimitedProducts } from '@/hooks/useLimitedProducts';
 import Link from 'next/link';
+import { urlFor } from "@/lib/sanity";
 
 export default function AppleStyleSlider() {
-    // const [products, setProducts] = useState([]);
-    // const [loading, setLoading] = useState(true);
-    const { products, loading } = useLimitedProducts(10);
-
-    // useEffect(() => {
-    //     const fetchProducts = async () => {
-    //         try {
-    //             const res = await fetch("/api/products");
-    //             if (!res.ok) {
-    //                 throw new Error("Failed to fetch products");
-    //             }
-
-    //             const data = await res.json();
-    //             const randomProducts = data.sort(() => 0.5 - Math.random());
-                 
-    //             const limited = randomProducts.slice(0, 10);
-    //             console.log(limited)
-    //             setProducts(limited);
-
-    //         } catch (error) {
-    //             console.log("Error loading products:", error);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     }
-    //     fetchProducts();
-
-    // }, []);
+    const { products, loading } = useProducts(10);
 
     if (loading) {
         return <p className='inner-section'>Loading products...</p>;
+    }
+
+    if (!products.length) {
+        return <p className='inner-section'>No products found.</p>;
     }
 
   return (
@@ -90,24 +69,38 @@ export default function AppleStyleSlider() {
         modules={[Pagination, Scrollbar, Navigation]}
         className="mySwiper"
         >
-            {products.map((item) => {
+            {products.map((item, index) => {
+                const slug = item.slug?.current || item._id || item._key;
+                const key = slug || `product-${index}`;
+                const imageUrl = item.image ? urlFor(item.image).url() : "";
+
+                if (!imageUrl || !slug) return null;
+
                 return (
-                    <SwiperSlide key={item._id}>
-                        <Link href={`/products/${item._id}`}>
-                            <Image
-                            src="/images/tshirt.avif" // make sure your API returns an image URL
-                            alt={item.name}
-                            width={400}
-                            height={400}
-                            className="rounded-xl"
-                            priority
-                            />
-                            <p>{item.name}</p>
-                            <p>£{item.price}</p>
+                    <SwiperSlide key={key} className={styles.slide}>
+                        <Link
+                            href={`/products/${slug}`}
+                            className={styles.slideLink}
+                            aria-label={`View ${item.name}`}
+                        >
+                            <div className={styles.slideImage}>
+                                <Image
+                                    src={imageUrl}
+                                    alt={item.name}
+                                    width={400}
+                                    height={400}
+                                    className="rounded-xl"
+                                    priority
+                                />
+                            </div>
+                            <div className={styles.slideInfo}>
+                                <h3 className={styles.slideInfoName}>{item.name}</h3>
+                                <p className={styles.slideInfoPrice}>£{item.price}</p>
+                                <span className={styles.slideInfoCta}>View product</span>
+                            </div>
                         </Link>
                     </SwiperSlide>
-                )
-                 
+                );
             })}
 
         </Swiper>
