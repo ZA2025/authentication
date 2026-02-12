@@ -39,7 +39,7 @@ const Cart = () => {
     <section>
       <div className={styles.bag}>
         <div className={styles.bagLeft}>
-          <h1 className={styles.bagTitle}>Bag</h1>
+          <h1 className={styles.bagTitle}>Your Cart</h1>
 
           {basket.length === 0 ? (
             <p>Your cart is empty</p>
@@ -62,7 +62,6 @@ const Cart = () => {
           <CartSummary
             items={basket}
             classNames={{
-              container: styles.bagRight,
               title: styles.bagSummary,
               divider: styles.bagLine,
               button: styles.bagBtn,

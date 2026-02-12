@@ -39,7 +39,6 @@ const CartItem = ({ item }) => {
         <div className={styles.cartItemColLeft}>
           <h3 className={styles.cartItemName}>{name}</h3>
           <p className={styles.cartItemPrice}>£{Number(price).toFixed(2)}</p>
-          <p className={styles.cartItemSize}>Size: {displaySize.charAt(0).toUpperCase() + displaySize.slice(1)}</p>
 
           <div className={styles.cartItemQuantity}>
             <button
@@ -50,7 +49,7 @@ const CartItem = ({ item }) => {
             >
               -
             </button>
-            <span>{quantity}</span>
+            <span className={styles.cartItemNumber}>{quantity}</span>
             <button
               type="button"
               className={styles.cartItemQuantityBtn}

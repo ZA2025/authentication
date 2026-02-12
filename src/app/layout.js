@@ -12,6 +12,7 @@ import Footer from "@/components/footer/Footer";
 import HowItWorks from "@/components/howItWorks/HowItWorks";
 import Banner from "@/components/banner/Banner";
 import Faqs from "@/components/faq/Faqs";
+import ContactForm from "@/components/contactForm/ContactForm";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export default async function RootLayout({ children }) {
                 <HowItWorks />
                 <Banner />
                 <Faqs />
+                <ContactForm />
                 <Footer />
               </FavoritesProvider>
             </BasketProvider>

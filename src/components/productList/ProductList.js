@@ -47,7 +47,7 @@ const ProductList = () => {
                       <p>{product.details}</p>
                       <p className={styles.cardPrice}>£{product.price}</p>
                     </div>
-                    <Link href={`/products/${slug}`} className={ styles.cardLink}>Find out more</Link>
+                    <Link href={`/products/${slug}`} className={ styles.cardLink}>View</Link>
                     {/* <Link key={`${product.id}-fav`} href={`/products/${product.id}`} className={styles.cardLink}>Favorit</Link> */}
                   </div>
                 </div>

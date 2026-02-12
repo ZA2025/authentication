@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import styles from './CartItem.module.scss';
 
 const CartSummary = ({ items, classNames, hideBuyButton = false }) => {
   const subtotalNumber = (items || [])
@@ -12,21 +13,20 @@ const CartSummary = ({ items, classNames, hideBuyButton = false }) => {
   const isDisabled = totalNumber <= 0;
 
   return (
-    <div className={classNames?.container}>
-      <h2 className={classNames?.title}>Summary</h2>
-      <p>Subtotal:  {subtotal > 0 ? `£` + subtotal : `—` }</p>
-      <p>Estimated Delivery & Handling: Free</p>
-      <hr className={classNames?.divider} />
-      <p>Total: £{total}</p>
-      <hr className={classNames?.divider} />
+    <div className={styles.summary}>
+      <h2 className={styles.summaryTitle}>Summary</h2>
+      <p><span className={styles.summarySubtotal}>Subtotal:</span> {subtotal > 0 ? `£` + subtotal : `—` }</p>
+      <p className={styles.summaryDelivery}>Estimated Delivery & Handling: Free</p>
+      <p><span className={styles.summaryTotal}>Total:</span>  £{total}</p>
       
       {!hideBuyButton && (
         <Link
           href={isDisabled ? "#" : "/checkout"}
-          className={`${classNames?.button} ${isDisabled ? classNames?.disabledButton : ""}`}
+          // className={`${classNames?.button} ${isDisabled ? classNames?.disabledButton : ""}`}
+          className={styles.summaryButton}
           aria-disabled={isDisabled}
         >
-          Buy
+          Checkout
         </Link>
       )}
        

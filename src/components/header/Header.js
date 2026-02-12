@@ -67,10 +67,14 @@ const Header = () => {
           </li> */}
           <li className={styles.navItem}>
             <Link className={styles.navLink} href="/products">
-              Products
+              Shop
             </Link>
           </li>
-
+          <li className={styles.navItem}>
+            <Link className={styles.navLink} href="/faqs">
+              FAQs
+            </Link>
+          </li>
           {session ? (
             <>
               <li className={styles.navItem}>

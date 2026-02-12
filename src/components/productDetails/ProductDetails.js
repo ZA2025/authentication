@@ -101,80 +101,83 @@ const ProductDetails = ({ product }) => {
   };
 
   return (
-    <div className={styles.product}>
-      <div className={`${styles.productCol} ${styles.left}`}>
-        <Image
-          src={imageUrl}
-          alt={product?.name || "Product image"}
-          width={630}
-          height={630}
-          className={styles.productImage}
-        />
-      </div>
+    <div className={styles.productSection}>
+      <div className={styles.product}>
+        <div className={`${styles.productCol} ${styles.left}`}>
+          <Image
+            src={imageUrl}
+            alt={product?.name || "Product image"}
+            width={630}
+            height={630}
+            className={styles.productImage}
+          />
+        </div>
 
-      <div className={`${styles.productCol} ${styles.right}`}>
-        <div className={styles.productInfo}>
-          <h1 className={styles.productName}>{product?.name}</h1>
-          {description && <p className={styles.productDetails}>{description}</p>}
-          {typeof product?.price === "number" && (
-            <p className={styles.productPrice}>£{product.price}</p>
-          )}
-          <div className={styles.productSizeSelector}>
-            <label htmlFor="size-select" className={styles.productSizeLabel}>Size:</label>
-            <select
-              id="size-select"
-              value={selectedSize}
-              onChange={(e) => setSelectedSize(e.target.value)}
-              className={styles.productSizeSelect}
-            >
-              <option value="small" disabled={!isSizeInStock('small')}>
-                Small {!isSizeInStock('small') && '(Out of Stock)'} {isSizeInStock('small') && `(${getSizeStock('small')} available)`}
-              </option>
-              <option value="medium" disabled={!isSizeInStock('medium')}>
-                Medium {!isSizeInStock('medium') && '(Out of Stock)'} {isSizeInStock('medium') && `(${getSizeStock('medium')} available)`}
-              </option>
-              <option value="large" disabled={!isSizeInStock('large')}>
-                Large {!isSizeInStock('large') && '(Out of Stock)'} {isSizeInStock('large') && `(${getSizeStock('large')} available)`}
-              </option>
-            </select>
-          </div>
-          {product?.sizesStock && (
-            <div className={styles.productStockInfo}>
-              {getSizeStock(selectedSize) > 0 ? (
-                <p style={{ color: '#28a745', fontWeight: 'bold' }}>
-                  {getSizeStock(selectedSize)} {getSizeStock(selectedSize) === 1 ? 'item' : 'items'} available in {selectedSize}
-                </p>
-              ) : (
-                <p style={{ color: '#dc3545', fontWeight: 'bold' }}>Out of stock in {selectedSize}</p>
-              )}
+        <div className={`${styles.productCol} ${styles.right}`}>
+          <div className={styles.productInfo}>
+            <h1 className={styles.productName}>{product?.name}</h1>
+            {description && <p className={styles.productDetails}>{description}</p>}
+            {typeof product?.price === "number" && (
+              <p className={styles.productPrice}>£{product.price}</p>
+            )}
+            {/* <div className={styles.productSizeSelector}>
+              <label htmlFor="size-select" className={styles.productSizeLabel}>Size:</label>
+              <select
+                id="size-select"
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+                className={styles.productSizeSelect}
+              >
+                <option value="small" disabled={!isSizeInStock('small')}>
+                  Small {!isSizeInStock('small') && '(Out of Stock)'} {isSizeInStock('small') && `(${getSizeStock('small')} available)`}
+                </option>
+                <option value="medium" disabled={!isSizeInStock('medium')}>
+                  Medium {!isSizeInStock('medium') && '(Out of Stock)'} {isSizeInStock('medium') && `(${getSizeStock('medium')} available)`}
+                </option>
+                <option value="large" disabled={!isSizeInStock('large')}>
+                  Large {!isSizeInStock('large') && '(Out of Stock)'} {isSizeInStock('large') && `(${getSizeStock('large')} available)`}
+                </option>
+              </select>
             </div>
-          )}
-          <div className={styles.productButtons}>
-            <button
-              onClick={handleAddToBasket}
-              className={styles.productLink}
-              disabled={!product?._id}
-              title={!product?._id ? "Product id unavailable for basket" : ""}
-            >
-              Buy It
-            </button>
-            {/* Uses synced state */}
-            <button onClick={handleToggleFavorite} className={styles.productFavorite}>
-              <Heart
-                size={22}
-                className={isFavorite ? "text-red-500 fill-red-500" : "text-gray-400"}
-              />
-              {isFavorite ? " Remove" : " Add to Favorites"}
-            </button>
-          </div>
-          <div style={{ marginTop: 16 }}>
-            <Link href="/products" className={styles.productBackBtn}>
-              Back to products
-            </Link>
+            {product?.sizesStock && (
+              <div className={styles.productStockInfo}>
+                {getSizeStock(selectedSize) > 0 ? (
+                  <p style={{ color: '#28a745', fontWeight: 'bold' }}>
+                    {getSizeStock(selectedSize)} {getSizeStock(selectedSize) === 1 ? 'item' : 'items'} available in {selectedSize}
+                  </p>
+                ) : (
+                  <p style={{ color: '#dc3545', fontWeight: 'bold' }}>Out of stock in {selectedSize}</p>
+                )}
+              </div>
+            )} */}
+            <div className={styles.productButtons}>
+              <button
+                onClick={handleAddToBasket}
+                className={styles.productLink}
+                disabled={!product?._id}
+                title={!product?._id ? "Product id unavailable for basket" : ""}
+              >
+                Add to Cart
+              </button>
+              {/* Uses synced state */}
+              <button onClick={handleToggleFavorite} className={styles.productFavorite}>
+                <Heart
+                  size={22}
+                  className={isFavorite ? "text-red-500 fill-red-500" : "text-gray-400"}
+                />
+                {isFavorite ? " Remove" : " Add to Favorites"}
+              </button>
+            </div>
+            {/* <div style={{ marginTop: 16 }}>
+              <Link href="/products" className={styles.productBackBtn}>
+                Back to products
+              </Link>
+            </div> */}
           </div>
         </div>
       </div>
     </div>
+     
   );
 };
 

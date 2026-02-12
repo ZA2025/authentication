@@ -1,17 +1,22 @@
 @use '../../styles/variables.scss' as *;
 @use '../../styles/mixins.scss' as *;
 
+.productSection {
+    position: relative;
+    background-color: #f7f7f7;
+}
 .product {
     position: relative;
     width: 100%;
-    max-width: 1260px;
+    max-width: 1360px;
     margin: 0 auto;
     box-sizing: border-box;
     padding: 20px;
+     
     @media screen and (min-width: 768px) {
         display: flex;
     }
-    @media screen and (min-width: 1280px) {
+    @media screen and (min-width: 1380px) {
         padding: 50px 0px;
     }
     &BackBtn {
@@ -19,10 +24,10 @@
         font-weight: bold;
     }
     &Name {
-        font-size: 18px;
+        font-size: 24px;
         font-weight: bold;
         @media screen and (min-width: 768px)  {
-            font-size: 24px;
+            font-size: 33px;
         }
     }
     &Col {
@@ -47,6 +52,7 @@
         display: block;
         width: 100%;
         height: auto;
+        max-width: 680px;
     }
    
     &Link {
@@ -95,7 +101,7 @@
     }
     &StockInfo {
         margin-top: 10px;
-        margin-bottom: 15px;
+        margin-bottom: 5px;
         p {
             margin: 0;
             font-size: 14px;
@@ -103,12 +109,36 @@
     }
     &Buttons {
         display: flex;
-        flex-direction: row;
-        gap: 10px;
+        flex-direction: column;
+        // gap: 10px;
+         
          
     }
     &Link {
-        @include button-primary($pink, gray, $lightpink);
+        // @include button-primary($pink, gray, $lightpink);
+        background-color: white;
+        border: 2px solid #dd014f;
+        color: #dd014f;
+        max-width: fit-content;
+        &:hover {
+            color: black;
+            background-color: white;
+            border: 2px solid #dd014f;
+            text-decoration: none;
+        }
          
+    }
+    &Favorite {
+        background-color: white;
+        border: 2px solid #dd014f;
+        color: #dd014f;
+        max-width: fit-content;
+         
+        &:hover {
+            color: black;
+            background-color: white;
+            border: 2px solid #dd014f;
+            text-decoration: none;
+        }
     }
 }

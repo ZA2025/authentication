@@ -1,15 +1,12 @@
 .bag {
     position: relative;
-    position: relative;
-    max-width: 1280px;
+    width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
-    padding: 50px 20px;
-    border-bottom: 1px solid rgb(186, 186, 186);
-    
+    padding: 50px 0px;
+    gap: 50px;
     @media screen and (min-width: 1280px) {
-        // padding: 50px 20px;
-        padding: 50px 20px;
+        max-width: 1480px;
     }
     @media screen and (min-width: 768px) {
         display: flex;
@@ -17,20 +14,30 @@
 
     &Left {
         width: 100%;
-        padding: 20px 0;
+        width: 100%;
+        padding: 30px 20px;
+        border-right: 2px solid #fddcf7;
+        border-bottom: 2px solid #fddcf7;
         @media screen and (min-width: 768px) {
-            width: 70%;
+            width: calc(70% - 50px);
         }
     }
 
     &Right {
+        width: 100%;
+        padding: 30px 30px;
+        // background-color: #fddcf7;
+        border-right: 2px solid #fddcf7;
+        border-bottom: 2px solid #fddcf7;
         @media screen and (min-width: 768px) {
-            padding: 20px;
+            width: calc(30% - 50px);
+             
         }
     }
 
     &Title, &Summary {
         font-size: 24px;
+        font-weight: bold;
     }
 
     &Summary, &Payment, &Delivery {
@@ -42,17 +49,17 @@
     }
     
     &Btn {
-        background-color: black;
-        color: white;
-        padding: 15px 30px;
-        display: block;
-        text-align: center;
-        border-radius: 50px;
-        margin-top: 20px;
-        font-weight: bold;
-        &:hover {
-            background-color: gray;
-        }
+        // background-color: black;
+        // color: white;
+        // padding: 15px 30px;
+        // display: block;
+        // text-align: center;
+        // border-radius: 50px;
+        // margin-top: 20px;
+        // font-weight: bold;
+        // &:hover {
+        //     background-color: gray;
+        // }
         &Disabled {
             opacity: 0.5;
             pointer-events: none;
@@ -60,7 +67,7 @@
         }
     }
     &Delivery, &Payment, &Summary {
-        border-bottom: 1px solid rgb(185, 184, 184);
+        border-bottom: 1px solid #e3e3e3;
     }
     &DeliveryTitle {
          

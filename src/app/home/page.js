@@ -6,12 +6,12 @@ import { useSession } from "next-auth/react";
 import LoginForm from '@/components/loginForm/LoginForm';
 import CredentialsLoginForm from '@/components/credentialsLoginForm/CredentialsLoginForm';
 import AdminPage from "@/app/admin/page";
+import styles from './Home.module.scss';
 
 const HomePage = () => {
     const { data: session, status } = useSession();
     const router = useRouter();
      
-
     useEffect(() => {
          
         if (!session) router.push('/'); // Redirect to home if not authenticated
@@ -19,7 +19,6 @@ const HomePage = () => {
         if (session) {
             console.log(session, status);
         }
-         
          
     }, [session, status, router]);
 
@@ -32,12 +31,15 @@ const HomePage = () => {
     }
 
     return (
-        <div className="inner-section">
-            <h1>Home Page</h1>
-            <h4>Welcome to the Home Page {session?.user?.name}</h4>
-            {/* <CredentialsLoginForm />
-            <LoginForm /> */}
-        </div>
+        <section className={styles.home}>
+            <div className="inner-section">
+               
+                <h4 className={styles.homeTitle}>Welcome Back {session?.user?.name}</h4>
+                {/* <CredentialsLoginForm />
+                <LoginForm /> */}
+            </div>
+        </section>
+         
     );
 };
 

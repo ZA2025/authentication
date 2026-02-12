@@ -3,23 +3,35 @@
 .slideImage {
     position: relative;
     text-align: center;
-    padding: 20px;
     img {
             
         width: 100%;
         height: auto;
-        max-width: 90%;
+        max-width: 100%;
         margin: 0 auto;
     }
 }
 .slideInfo {
     padding: 20px;
-    text-align: center;
+    text-align: left;
+    background-color: white;
+    &Name {
+        color: #cf267b;
+        font-size: 26px;
+        font-weight: normal;
+    }
+    &Price {
+        font-size: 16px;
+        color: black;
+        font-weight: bold;
+        margin-top: 10px;
+    }
 }
 .slideInfo {
     &Cta {
-        @include button-primary(rgb(57, 56, 56), $pink, white);
+        @include button-primary(#392125, #7a3943, white);
         max-width: fit-content;
+        margin-top: 20px;
     }
 }
  

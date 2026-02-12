@@ -3,20 +3,27 @@
 .How {
     width: 100%;
     position: relative;
-    // background-color: #f2f29a;
     background-color: #f9ccdf;
     padding: 50px 0;
     text-align: center;
     &Items {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: 20px;
+        @media screen and (min-width: 900px) {
+            flex-direction: row;
+        }
+        @media screen and (min-width: 1280px) {
+            
+        }
     }
     &Item {
-        width: 33.33%;
+        width: 100%;
         padding: 20px;
         text-align: center;
-        
+        @media screen and (min-width: 900px) {
+            width: 33.33%;
+        }
         &Title {    
             font-size: 24px;
             font-weight: bold;

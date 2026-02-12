@@ -96,7 +96,7 @@ export default function AppleStyleSlider() {
                             <div className={styles.slideInfo}>
                                 <h3 className={styles.slideInfoName}>{item.name}</h3>
                                 <p className={styles.slideInfoPrice}>£{item.price}</p>
-                                <span className={styles.slideInfoCta}>View product</span>
+                                 
                             </div>
                         </Link>
                     </SwiperSlide>

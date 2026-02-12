@@ -102,11 +102,11 @@ a {
 }
 .inner-section {
     position: relative;
-    max-width: 1280px;
+    max-width: 1580px;
     margin: 0 auto;
     box-sizing: border-box;
     padding: 50px 20px;
-    @media screen and (min-width: 1280px) {
+    @media screen and (min-width: 1380px) {
         padding: 50px 20px;
     }
 }
@@ -228,16 +228,12 @@ a {
 .mySwiper {
     margin-top: 50px;
     padding-top: 60px !important;
-    
-    .swiper-slide {
-        background-color: rgb(230, 230, 230);
-         
-    }
 }
 .apple-swiper {
     position: relative;
     max-width: 1620px;
     margin: 0 auto;
+    margin-bottom: 150px;
     .swiper-button-prev,
     .swiper-button-next {
         position: absolute;

@@ -44,9 +44,9 @@ export default {
         type: 'string',
         options: {
           list: [
-            { title: 'Shoes', value: 'shoes' },
-            { title: 'Clothing', value: 'clothing' },
-            { title: 'Accessories', value: 'accessories' },
+            { title: 'Cookies', value: 'cookies' },
+            { title: 'Cake', value: 'cake' },
+             
           ],
         },
       },
