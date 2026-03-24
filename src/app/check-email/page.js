@@ -97,7 +97,7 @@ const CheckEmailPage = () => {
                         marginBottom: '0.5rem',
                         color: '#1e40af'
                     }}>
-                        We've sent a verification email to:
+                        We&apos;ve sent a verification email to:
                     </p>
                     <p style={{ 
                         fontWeight: 'bold',
@@ -135,7 +135,7 @@ const CheckEmailPage = () => {
                         color: '#475569',
                         fontSize: '0.95rem'
                     }}>
-                        Didn't receive the email?
+                        Didn&apos;t receive the email?
                     </p>
                     
                     {resendStatus && (
