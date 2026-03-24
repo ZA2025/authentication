@@ -46,7 +46,7 @@ export async function GET() {
   try {
     const favorites = await Favorite.find({ userId: String(session.user.id) }).sort({ updatedAt: -1 });
     
-    // Enrich favorites with full product details from Sanity
+     
     const enrichedFavorites = await Promise.all(
       favorites.map(async (favorite) => {
         try {
