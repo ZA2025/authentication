@@ -7,13 +7,9 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    // display: flex;
-    // flex-wrap: wrap;
-    // gap: 20px;
     max-width: 1380px;
     margin: 0 auto;
     box-sizing: border-box;
-    // padding: 50px 0;
     justify-content: center;
      
     @media screen and (min-width: 1380px) {
@@ -24,12 +20,58 @@
         width: 100%;
         padding: 0;
         display: flex;
-        justify-content: center;
+        justify-content: left;
         flex-wrap: wrap;
         gap: 20px;
         
     }  
 }
+
+.filters {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+    padding: 20px 10px 0 0;
+}
+
+.filtersInput,
+.filtersSelect {
+    border: 1px solid #dadada;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 14px;
+    background: #fff;
+    
+}
+
+.filtersSelect {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 34px;
+    background-image:
+      linear-gradient(45deg, transparent 50%, #666 50%),
+      linear-gradient(135deg, #666 50%, transparent 50%);
+    background-position:
+      calc(100% - 16px) calc(50% - 2px),
+      calc(100% - 11px) calc(50% - 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+
+.filtersInput {
+    min-width: 220px;
+    flex: 1;
+}
+
+.noResults {
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+}
+
 .card {
     position: relative;
     width: 100%; 

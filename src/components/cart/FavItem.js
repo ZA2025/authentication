@@ -46,7 +46,6 @@ const FavItem = ({ item }) => {
           <p className={styles.cartItemPrice}>£{price}</p>
         </div>
         <div className={styles.cartItemColRight}>
-           
           <Link href={`/products/${slug}`} className={styles.cartItemBtn}>
             View Details
           </Link>

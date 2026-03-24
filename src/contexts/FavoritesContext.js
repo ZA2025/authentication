@@ -23,6 +23,7 @@ export const FavoritesProvider = ({ children }) => {
       const res = await fetch("/api/favorites");
       if (res.ok) {
         const data = await res.json();
+        console.log(data)
         setFavorites(data);
       }
     } catch (err) {
