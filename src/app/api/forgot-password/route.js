@@ -1,11 +1,9 @@
 import User from '@/model/user-model';
 import connectToDatabase from '@/lib/mongodb';
 import crypto from 'crypto';
-import { Resend } from 'resend'; // <-- Added
+import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 import { getClientIP, rateLimit } from '@/lib/rateLimiter';
-
-const resend = new Resend(process.env.RESEND_API_KEY); // <-- Added
 
 export const POST = async (req) => {
     // ADD RATE LIMITING HERE (right after the try block starts)
@@ -54,10 +52,14 @@ export const POST = async (req) => {
     // Generate the reset URL
     const resetUrl = `http://${req.headers.get('host')}/reset-password/${resetToken}`;
 
-    // --- CHANGED: Prepare Resend email ---
     try {
+        if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
+            return NextResponse.json({ message: 'Email service is not configured' }, { status: 500 });
+        }
+
+        const resend = new Resend(process.env.RESEND_API_KEY);
         await resend.emails.send({
-            from: process.env.RESEND_FROM_EMAIL, // <-- must be a verified domain or sandbox
+            from: process.env.RESEND_FROM_EMAIL,
             to: [email],
             subject: 'Password Reset Request',
             html: `

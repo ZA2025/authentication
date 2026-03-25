@@ -5,8 +5,6 @@ import { getClientIP, rateLimit } from '@/lib/rateLimiter';
 import crypto from 'crypto';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export const POST = async (req) => {
     try {
         // ADD RATE LIMITING HERE (right after the try block starts)
@@ -52,6 +50,14 @@ export const POST = async (req) => {
 
         // Send verification email
         const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email/${verificationToken}`;
+
+        if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
+            return NextResponse.json({
+                error: 'Email service is not configured'
+            }, { status: 500 });
+        }
+
+        const resend = new Resend(process.env.RESEND_API_KEY);
         
         const { data, error } = await resend.emails.send({
             from: process.env.RESEND_FROM_EMAIL,
