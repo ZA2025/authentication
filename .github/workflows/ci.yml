@@ -9,13 +9,26 @@ on:
 jobs:
   test-build-lint:
     runs-on: ubuntu-latest
+    env:
+      NEXTAUTH_SECRET: test-secret
+      NEXTAUTH_URL: http://localhost:3000
+      GOOGLE_CLIENT_ID: test-google-client-id
+      GOOGLE_CLIENT_SECRET: test-google-client-secret
+      MONGODB_URI: mongodb://127.0.0.1:27017/ci
+      STRIPE_SECRET_KEY: sk_test_placeholder
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
+      SANITY_PROJECT_ID: test
+      SANITY_DATASET: production
+      SANITY_API_TOKEN: test
+      SENDGRID_API_KEY: test
+      SENDGRID_FROM_EMAIL: test@example.com
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: npm
