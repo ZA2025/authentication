@@ -81,6 +81,22 @@ a {
     }
 }
 
+.passwordContainer {
+    position: relative;
+    display: flex;
+    .passwordToggle {
+        background-color: transparent;
+        border: 0;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        z-index: 10;
+        padding: 5px;
+    }
+}
+
 .success-container {
     display: flex;
     flex-direction: column;

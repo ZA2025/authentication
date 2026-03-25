@@ -41,7 +41,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
     "@vitest/coverage-v8": "^4.0.18",
-    "eslint": "9.37.0",
+    "eslint": "^9.39.4",
     "eslint-config-next": "15.5.5",
     "mongodb-memory-server": "^11.0.1",
     "vitest": "^4.0.18"
