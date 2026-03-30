@@ -23,26 +23,25 @@ vi.mock("@/lib/rateLimiter", () => ({
   rateLimit: vi.fn(),
 }));
 
-import { POST } from "@/app/api/resend-verification/route";
+import { POST } from "@/app/api/forgot-password/route";
 import { getClientIP, rateLimit } from "@/lib/rateLimiter";
 import User from "@/model/user-model";
 
 const makeReq = (body) =>
-  new Request("http://localhost:3000/api/resend-verification", {
+  new Request("http://localhost:3000/api/forgot-password", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", host: "localhost:3000" },
     body: JSON.stringify(body),
   });
 
-describe("POST /api/resend-verification", () => {
+describe("POST /api/forgot-password", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(console, "error").mockImplementation(() => {});
-    process.env.NEXTAUTH_URL = "http://localhost:3000";
-    process.env.RESEND_API_KEY = "test-resend-key";
-    process.env.RESEND_FROM_EMAIL = "noreply@example.com";
     getClientIP.mockReturnValue("127.0.0.1");
     rateLimit.mockReturnValue({ success: true });
+    process.env.RESEND_API_KEY = "test-resend-key";
+    process.env.RESEND_FROM_EMAIL = "noreply@example.com";
   });
 
   afterEach(() => {
@@ -57,81 +56,74 @@ describe("POST /api/resend-verification", () => {
     });
 
     const res = await POST(makeReq({ email: "user@test.com" }));
-
     expect(res.status).toBe(429);
     expect(res.headers.get("Retry-After")).toBe("3600");
     expect(await res.json()).toEqual({ error: "Too many attempts" });
   });
 
-  it("returns 400 when email is missing", async () => {
-    const res = await POST(makeReq({}));
-
-    expect(res.status).toBe(400);
-    expect(await res.json()).toEqual({ error: "Email is required" });
-  });
-
-  it("returns 404 when user is not found", async () => {
+  it("returns 400 when email does not exist", async () => {
     User.findOne.mockResolvedValue(null);
 
-    const res = await POST(makeReq({ email: "user@test.com" }));
-
-    expect(res.status).toBe(404);
-    expect(await res.json()).toEqual({ error: "User not found" });
+    const res = await POST(makeReq({ email: "none@test.com" }));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ message: "Email does not exist" });
   });
 
-  it("returns 200 when user email is already verified", async () => {
-    User.findOne.mockResolvedValue({ emailVerified: true });
+  it("returns 403 for oauth users", async () => {
+    User.findOne.mockResolvedValue({ authType: "oauth" });
 
-    const res = await POST(makeReq({ email: "user@test.com" }));
-
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ message: "Email already verified" });
+    const res = await POST(makeReq({ email: "oauth@test.com" }));
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({
+      message: "Google users cannot reset passwords. Please use Google login.",
+    });
   });
 
   it("returns 500 when email service is not configured", async () => {
     const saveMock = vi.fn().mockResolvedValue(undefined);
     User.findOne.mockResolvedValue({
       name: "User",
-      emailVerified: false,
+      authType: "local",
       save: saveMock,
     });
     delete process.env.RESEND_API_KEY;
 
     const res = await POST(makeReq({ email: "user@test.com" }));
-
     expect(res.status).toBe(500);
-    expect(await res.json()).toEqual({ error: "Email service is not configured" });
+    expect(await res.json()).toEqual({ message: "Email service is not configured" });
   });
 
-  it("returns 500 when resend returns an error", async () => {
+  it("returns 400 when sending email fails", async () => {
+    const saveMock = vi.fn().mockResolvedValue(undefined);
+    const user = {
+      name: "User",
+      authType: "local",
+      save: saveMock,
+    };
+    User.findOne.mockResolvedValue(user);
+    sendEmailMock.mockRejectedValue(new Error("send failed"));
+
+    const res = await POST(makeReq({ email: "user@test.com" }));
+    expect(res.status).toBe(400);
+    expect(saveMock).toHaveBeenCalledTimes(2);
+    expect(await res.json()).toEqual({ message: "Failed to send email" });
+  });
+
+  it("returns 200 when reset email is sent", async () => {
     const saveMock = vi.fn().mockResolvedValue(undefined);
     User.findOne.mockResolvedValue({
       name: "User",
-      emailVerified: false,
+      authType: "local",
       save: saveMock,
     });
-    sendEmailMock.mockResolvedValue({ data: null, error: { message: "send failed" } });
+    sendEmailMock.mockResolvedValue({ id: "email_1" });
 
     const res = await POST(makeReq({ email: "user@test.com" }));
-
-    expect(res.status).toBe(500);
-    expect(await res.json()).toEqual({ error: "Failed to send verification email" });
-  });
-
-  it("returns 200 when resend verification email is sent", async () => {
-    const saveMock = vi.fn().mockResolvedValue(undefined);
-    User.findOne.mockResolvedValue({
-      name: "User",
-      emailVerified: false,
-      save: saveMock,
-    });
-    sendEmailMock.mockResolvedValue({ data: { id: "email_1" }, error: null });
-
-    const res = await POST(makeReq({ email: "user@test.com" }));
-
+    expect(res.status).toBe(200);
     expect(saveMock).toHaveBeenCalled();
     expect(sendEmailMock).toHaveBeenCalled();
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ message: "Verification email sent" });
+    const data = await res.json();
+    expect(data.message).toContain("sent a password reset link");
+    expect(data.email).toBe("user@test.com");
   });
 });

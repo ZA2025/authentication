@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const sendEmailMock = vi.fn();
 
@@ -31,9 +31,14 @@ const makeReq = (body) =>
 describe("POST /api/verify-email", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
     process.env.NEXTAUTH_URL = "http://localhost:3000";
     process.env.RESEND_API_KEY = "test-resend-key";
     process.env.RESEND_FROM_EMAIL = "noreply@example.com";
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it("returns 400 when email is missing", async () => {
