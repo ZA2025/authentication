@@ -9,7 +9,7 @@ import crypto from 'crypto';
 // Add password validation function at the top of the file
 function validatePassword(password) {
     if (password.length < 8) {
-        return { valid: false, error: 'Password must be at least 8 characters' };
+        return { valid: false, message: 'Password must be at least 8 characters' };
     }
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);

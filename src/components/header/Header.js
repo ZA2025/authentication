@@ -49,7 +49,7 @@ const Header = () => {
     <header className={styles.header}>
       <nav className={styles.nav}>
         <div className={styles.navLogoContainer}>
-        <Link href="/">
+        <Link href="/" onClick={closeMenu}>
           <Image 
             src="/images/Cookiez.png" 
             alt="logo" 
@@ -66,12 +66,12 @@ const Header = () => {
             </Link>
           </li> */}
           <li className={styles.navItem}>
-            <Link className={styles.navLink} href="/products">
+            <Link className={styles.navLink} href="/products" onClick={closeMenu}>
               Shop
             </Link>
           </li>
           <li className={styles.navItem}>
-            <Link className={styles.navLink} href="/faqs">
+            <Link className={styles.navLink} href="/faqs" onClick={closeMenu}>
               FAQs
             </Link>
           </li>
@@ -83,7 +83,7 @@ const Header = () => {
                 </Link>
               </li>
               <li className={styles.navItem}>
-                <Link className={styles.navLink} href="/favorites">
+                <Link className={styles.navLink} href="/favorites" onClick={closeMenu}>
                   <div className={styles.navIconWrapper}>
                     <Heart size={24} />
                     {favoritesCount > 0 && (
@@ -93,7 +93,7 @@ const Header = () => {
                 </Link>
               </li>
               <li className={styles.navItem}>
-                <Link className={styles.navLink} href="/cart">
+                <Link className={styles.navLink} href="/cart" onClick={closeMenu}>
                   <div className={styles.navIconWrapper}>
                     <ShoppingCart size={24} />
                     {basketCount > 0 && (
