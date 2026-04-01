@@ -12,7 +12,7 @@ const FavoritesPage = () => {
             {favorites.length === 0 ? (
                 <p>No favorites found</p>
             ) : (
-                <ul>
+                <ul className="favorites-list">
                     {favorites.map((favorite) => (
                         <FavItem
                             key={favorite._id || favorite.productId}
