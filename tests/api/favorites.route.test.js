@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 // Mock auth
 vi.mock("@/auth", () => ({
@@ -46,6 +46,14 @@ const makeDeleteReq = (body) =>
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
     });
+
+beforeEach(() => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+});
+
+afterEach(() => {
+    vi.restoreAllMocks();
+});
 
 describe("POST /api/favorites", () => {
     beforeEach(() => {
@@ -231,7 +239,8 @@ describe("GET /api/favorites", () => {
     //500 error
     it("GET 500 error", async () => {
         auth.mockResolvedValue({ user: { id: "u1" } });
-        Favorite.find.mockRejectedValue(new Error("Database error"));
+        const sortMock = vi.fn().mockRejectedValue(new Error("Database error"));
+        Favorite.find.mockReturnValue({ sort: sortMock });
         const res = await GET();
         expect(res.status).toBe(500);
         expect(await res.text()).toBe("Internal Server Error");
