@@ -16,8 +16,15 @@ export async function POST(req) {
   try {
     const body = await req.json().catch(() => ({}));
     const email = body?.email || "e2e.user@example.com";
-    const password = body?.password || "E2ePass1!";
+    const password = body?.password || process.env.E2E_TEST_PASSWORD;
     const name = body?.name || "E2E User";
+
+    if (!password) {
+      return NextResponse.json(
+        { error: "E2E seed requires a password in body or E2E_TEST_PASSWORD env." },
+        { status: 400 }
+      );
+    }
 
     await connectToDatabase();
 
