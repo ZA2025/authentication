@@ -40,13 +40,16 @@ export const {
             },
             async authorize(credentials, req) {
                 if (credentials === null) return null;
-                // Rate limiting
-                const clientIP = getClientIP(req);
-                const rateLimitResult = rateLimit(`login:${clientIP}`, 5, 15 * 60 * 1000); // 5 attempts per 15 minutes
-                
-                if (!rateLimitResult.success) {
-                    console.log(`Rate limit exceeded for IP: ${clientIP}`);
-                    return null;
+                const skipRateLimit = process.env.E2E_TEST_MODE === "true";
+                if (!skipRateLimit) {
+                    // Rate limiting
+                    const clientIP = getClientIP(req);
+                    const rateLimitResult = rateLimit(`login:${clientIP}`, 5, 15 * 60 * 1000); // 5 attempts per 15 minutes
+
+                    if (!rateLimitResult.success) {
+                        console.log(`Rate limit exceeded for IP: ${clientIP}`);
+                        return null;
+                    }
                 }
                 
                 try {
