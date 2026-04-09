@@ -11,12 +11,12 @@ test.describe("Checkout Smoke", () => {
   test(
     "authenticated user can reach checkout flow",
     async ({ page, request }) => {
-      const generatedPassword =
-        process.env.E2E_TEST_PASSWORD ||
-        `e2e-${Date.now()}-${Math.random().toString(36).slice(2)}Aa1!`;
+      const testPassword = process.env.E2E_TEST_PASSWORD;
+      test.skip(!testPassword, "Set E2E_TEST_PASSWORD to run authenticated checkout smoke.");
+
       const seedPayload = {
         email: "e2e.user@example.com",
-        password: generatedPassword,
+        password: testPassword,
         name: "E2E User",
       };
 
