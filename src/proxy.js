@@ -13,6 +13,14 @@ import {
 const { auth } = NextAuth(authConfig);
 
 export async function proxy(request) {
+  if (request.nextUrl.pathname.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
+
+  if (request.nextUrl.pathname.startsWith("/api/test/e2e-seed")) {
+    return NextResponse.next();
+  }
+
   if (request.nextUrl.pathname.startsWith("/api/webhook")) {
     return NextResponse.next();
   }
