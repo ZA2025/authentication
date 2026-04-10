@@ -53,7 +53,6 @@ export const POST = async (req) => {
     const resetUrl = `http://${req.headers.get('host')}/reset-password/${resetToken}`;
 
     try {
-        console.log('API KEY:', process.env.RESEND_API_KEY);
         if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
             return NextResponse.json({ message: 'Email service is not configured' }, { status: 500 });
         }
